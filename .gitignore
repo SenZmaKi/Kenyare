@@ -1,0 +1,17 @@
+.venv/
+uploads/
+node_modules
+input.pdf
+__pycache__
+cropped.png
+input.png
+no-checkbox.png
+yes-checkbox.png
+info
+math
+output.png
+output.xlsx
+.env
+questions
+template.txt
+template.xlsx
