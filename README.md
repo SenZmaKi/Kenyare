@@ -1,0 +1,1 @@
+![schema](https://github.com/SenZmaKi/Kenyare/blob/master/docs/schema.png)
