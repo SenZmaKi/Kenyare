@@ -26,7 +26,7 @@ export async function POST(event: RequestEvent) {
         qualified_assistants_count: 7,
         unqualified_assistants_count: 0,
         others_count: 0,
-        annual_fees: 70_000_000,
+        annual_fees: 100_000_000,
         limit_of_indemnity: 100_000_000,
         profession:
             "AUDIT, TAX AND ADVISORY SERVICES(CERTIFIED PUBLIC ACCOUNTANTS)",

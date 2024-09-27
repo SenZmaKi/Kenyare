@@ -165,7 +165,7 @@ def default_quotation_output() -> QuotationOutput:
         "qualified_assistants": {"rate": 3000, "value": 21000.0, "original": 7},
         "unqualified_assistants": {"rate": 2000, "value": 0.0, "original": 0},
         "others": {"rate": 1000, "value": 0.0, "original": 0},
-        "annual_fees": {"rate": 0.00115, "value": 80500.0, "original": 70000000},
+        "annual_fees": {"rate": 0.00115, "value": 80500.0, "original": 100000000},
         "A": 112300.0,
         "B": 505350.0,
         "C": 505350.0,
