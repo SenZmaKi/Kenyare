@@ -1,0 +1,9 @@
+{
+	"/": [],
+	"/quotation/input": [
+		"src/routes/quotation/input/+server.ts"
+	],
+	"/quotation/output": [
+		"src/routes/quotation/output/+server.ts"
+	]
+}
