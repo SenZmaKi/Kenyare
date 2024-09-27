@@ -39,3 +39,7 @@ This solution aims to drastically reduce the time and effort required to process
 # Expected output
 
 ![Output](https://github.com/SenZmaKi/Kenyare/blob/master/docs/output.png)
+
+# Checkbox algorithm schema
+
+![Checkbox algoirthm schema](https://github.com/SenZmaKi/Kenyare/blob/master/docs/checkbox-algo.png)
