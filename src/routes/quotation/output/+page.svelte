@@ -71,7 +71,7 @@
       <div class="z-10 flex pb-5 justify-center items-center">
         <p class="text-xl pr-5 font-bold">Professional Indemnity Quotation</p>
 
-        <a href={"/outputs/output.xlsx"} download="output.xlsx">
+        <a href={quotationOutput.excel_download_url} download="quotation.xlsx">
           <Button
             class="flex p-2 ease-in-out duration-100 hover:scale-110"
             color="green"

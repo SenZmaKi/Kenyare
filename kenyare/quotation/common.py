@@ -38,9 +38,9 @@ class QuotationOutput(TypedDict):
     profession: RateValueOriginal
     profession_is_confident: bool
     A_B_C: float
-    loss_of_documents: float | None
-    libel_and_slander: float | None
-    dishonest_employer: float | None
+    loss_of_documents: float 
+    libel_and_slander: float 
+    dishonest_employer: float
     basic_premium: float
     levies: float
     sd: float

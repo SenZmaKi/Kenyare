@@ -14,13 +14,43 @@
   export let quotationInput: QuotationInput;
   export let open: boolean;
   export let isLoading: boolean;
+  function convertQuotationInputToProperFormat(quotationInput: QuotationInput) {
+    return {
+      reinsured_name: quotationInput.reinsured_name,
+      broker_name: quotationInput.broker_name,
+      insured_name: quotationInput.insured_name,
+      // @ts-ignore
+      partners_count: parseInt(quotationInput.partners_count),
+      qualified_assistants_count: parseInt(
+        // @ts-ignore
+        quotationInput.qualified_assistants_count
+      ),
+      unqualified_assistants_count: parseInt(
+        // @ts-ignore
+        quotationInput.unqualified_assistants_count
+      ),
+      // @ts-ignore
+      others_count: parseInt(quotationInput.others_count),
+      // @ts-ignore
+      annual_fees: parseFloat(quotationInput.annual_fees),
+      // @ts-ignore
+      limit_of_indemnity: parseFloat(quotationInput.limit_of_indemnity),
+      profession: quotationInput.profession,
+      loss_of_documents: quotationInput.loss_of_documents,
+      libel_and_slander: quotationInput.libel_and_slander,
+      dishonest_employer: quotationInput.dishonest_employer,
+      retroactive_cover: quotationInput.retroactive_cover,
+    };
+  }
   async function generateQuotation() {
     open = false;
     isLoading = true;
-    await new Promise(r => setTimeout(r, 4000));
+    await new Promise((r) => setTimeout(r, 4000));
+    const properQuotationInput =
+      convertQuotationInputToProperFormat(quotationInput);
     const resp = await fetch("/quotation/output", {
       method: "POST",
-      body: JSON.stringify(quotationInput),
+      body: JSON.stringify(properQuotationInput),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",

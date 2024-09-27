@@ -80,7 +80,9 @@ def extract_quotation_input(pdf_path: Path) -> QuotationInput:
         r"(?:others|other staff):?\s*\d+", pdf_text, re.IGNORECASE
     )
     annual_fees_regex = re.search(
-        r"(?:annual_fees|fees over year|revenue had):?\s*[\d,]+", pdf_text, re.IGNORECASE
+        r"(?:annual_fees|fees over year|revenue had):?\s*[\d,]+",
+        pdf_text,
+        re.IGNORECASE,
     )
     limit_of_indemnity_regex = re.search(
         r"(?:limit of indemnity|indemnity limit):?\s*[\d,]+", pdf_text, re.IGNORECASE
@@ -130,17 +132,20 @@ def extract_quotation_input(pdf_path: Path) -> QuotationInput:
         annual_fees=annual_fees,
         limit_of_indemnity=limit_of_indemnity,
         profession=profession,  # type: ignore
-        loss_of_documents=extensions["loss_of_documents"], 
-        libel_and_slander=extensions["defamation"], 
+        loss_of_documents=extensions["loss_of_documents"],
+        libel_and_slander=extensions["defamation"],
         dishonest_employer=extensions["defamation"],
         retroactive=extensions["retroactive"],
     )
 
 
 def main():
-    path = Path("uploads/input.pdf")
-    quotation_input = extract_quotation_input(path)
-    print(json.dumps(quotation_input, indent=4))
+    try:
+        path = Path("uploads/input.pdf")
+        quotation_input = extract_quotation_input(path)
+        print(json.dumps(quotation_input, indent=4))
+    except Exception as e:
+        print(json.dumps({"error": str(e)}, indent=4))
 
 
 if __name__ == "__main__":

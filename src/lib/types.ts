@@ -16,13 +16,13 @@ export type QuotationInput = {
   retroactive_cover: boolean;
 };
 
-type RateValueOriginal = {
+export type RateValueOriginal = {
   rate: number;
   value: number;
   original: any;
 };
 
-type QuotationOutput = {
+export type QuotationOutput = {
   partners: RateValueOriginal;
   qualified_assistants: RateValueOriginal;
   unqualified_assistants: RateValueOriginal;

@@ -15,8 +15,12 @@
   const handleFileChange = async (event: Event) => {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      isLoading = true;
       file = input.files[0];
+      if (!file.type.includes("pdf")) {
+        alert("Please upload a PDF file");
+        return;
+      }
+      isLoading = true;
       if (uploadedTimeout) {
         clearTimeout(uploadedTimeout);
       }
@@ -88,7 +92,7 @@
     </Toast>
   {/if}
   {#if quotationInput}
-    <QuotationInput {quotationInput} bind:isLoading={isLoading} open={!!quotationInput} />
+    <QuotationInput {quotationInput} bind:isLoading open={!!quotationInput} />
   {/if}
   <div
     class="z-10 justify-center items-center h-screen flex flex-col space-y-20"

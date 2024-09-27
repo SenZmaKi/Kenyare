@@ -33,7 +33,7 @@ export async function POST(event: RequestEvent) {
         loss_of_documents: true,
         libel_and_slander: true,
         dishonest_employer: true,
-        retroactive_cover: false,
+        retroactive_cover: true,
     };
 
 
