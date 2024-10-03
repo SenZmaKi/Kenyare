@@ -1,3 +1,5 @@
+#python>=3.12.4
 pdf2image
 pytesseract
 openpyxl
+requests

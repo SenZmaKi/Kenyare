@@ -1,7 +1,7 @@
+from csv import excel
 import json
 from pathlib import Path
 from kenyare.quotation.common import QuotationInput, QuotationOutput
-import sys
 
 from kenyare.quotation.excel import make_excel
 
@@ -99,14 +99,14 @@ def get_quotation_output(input: QuotationInput) -> QuotationOutput:
     A_B_C = A + B + C
     loss_of_documents = A if input["loss_of_documents"] else 0
     libel_and_slander = A if input["libel_and_slander"] else 0
-    dishonest_employer = A if input["dishonest_employer"] else 0
+    dishonest_employees = A if input["dishonest_employees"] else 0
     basic_premium = A_B_C
     if loss_of_documents:
         basic_premium += loss_of_documents
     if libel_and_slander:
         basic_premium += libel_and_slander
-    if dishonest_employer:
-        basic_premium += dishonest_employer
+    if dishonest_employees:
+        basic_premium += dishonest_employees
     total_premium = basic_premium + Constants.levies + Constants.sd
     return QuotationOutput(
         partners={
@@ -151,11 +151,12 @@ def get_quotation_output(input: QuotationInput) -> QuotationOutput:
         A_B_C=A_B_C,
         loss_of_documents=loss_of_documents,
         libel_and_slander=libel_and_slander,
-        dishonest_employer=dishonest_employer,
+        dishonest_employees=dishonest_employees,
         basic_premium=basic_premium,
         levies=Constants.levies,
         sd=Constants.sd,
         total_premium=total_premium,
+        excel_download_url="",
     )
 
 
@@ -179,7 +180,7 @@ def default_quotation_output() -> QuotationOutput:
         "A_B_C": 1123000.0,
         "loss_of_documents": 112300.0,
         "libel_and_slander": 112300.0,
-        "dishonest_employer": 112300.0,
+        "dishonest_employees": 112300.0,
         "basic_premium": 1459900.0,
         "levies": 6259.5,
         "sd": 40,
@@ -188,7 +189,7 @@ def default_quotation_output() -> QuotationOutput:
     }
 
 
-def test_get_quotation():
+def test():
     input: QuotationInput = {
         "insured_name": "FEKAN HOWELL",
         "reinsured_name": "FIRST ASSURANCE",
@@ -202,8 +203,8 @@ def test_get_quotation():
         "profession": "AUDIT, TAX AND ADVISORY SERVICES(CERTIFIED PUBLIC ACCOUNTANTS)",
         "loss_of_documents": True,
         "libel_and_slander": True,
-        "dishonest_employer": True,
-        "retroactive": False,
+        "dishonest_employees": True,
+        "retroactive_cover": False,
     }
     output = get_quotation_output(input)
 
@@ -211,28 +212,5 @@ def test_get_quotation():
     assert output["total_premium"] == 1466199.5
 
 
-def main():
-    try:
-        with open("uploads/quotation_input.json", "r") as f:
-            quotation_input = json.load(f)
-            output = get_quotation_output(quotation_input)
-            path = Path("static/outputs/output.xlsx")
-            make_excel(
-                quotation_input["reinsured_name"],
-                quotation_input["broker_name"],
-                quotation_input["insured_name"],
-                output,
-                path,
-            )
-
-            output["excel_download_url"] = (  # type: ignore
-                str(path).replace("static", "").replace("\\", "/")
-            )
-
-    except Exception:
-        output = default_quotation_output()
-    print(json.dumps(output, indent=4))
-
-
 if __name__ == "__main__":
-    main()
+    test()

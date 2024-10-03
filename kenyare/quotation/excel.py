@@ -1,5 +1,4 @@
-from pathlib import Path
-from kenyare.quotation.common import QuotationInput, QuotationOutput
+from kenyare.quotation.common import QuotationOutput
 from openpyxl import load_workbook
 
 
@@ -8,7 +7,7 @@ def make_excel(
     broker_name: str,
     insured_name: str,
     quotation_output: QuotationOutput,
-    path: Path,
+    save_path: str,
 ):
     workbook = load_workbook("kenyare/template.xlsx")
     sheet = workbook.active
@@ -54,8 +53,8 @@ def make_excel(
         else ""
     )
     sheet["E28"] = (
-        quotation_output["dishonest_employer"]
-        if quotation_output["dishonest_employer"]
+        quotation_output["dishonest_employees"]
+        if quotation_output["dishonest_employees"]
         else ""
     )
     sheet["E29"] = quotation_output["basic_premium"]
@@ -64,4 +63,4 @@ def make_excel(
     sheet["E33"] = quotation_output["sd"]
     sheet["E34"] = quotation_output["total_premium"]
 
-    workbook.save(path)
+    workbook.save(save_path)

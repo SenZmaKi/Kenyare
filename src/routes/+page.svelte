@@ -2,13 +2,24 @@
   import Main from "../components/Main.svelte";
   import { Button, Toast } from "flowbite-svelte";
   import { onMount } from "svelte";
-  import { CheckCircleSolid } from "flowbite-svelte-icons";
+  import { CheckCircleSolid, CloseCircleSolid } from "flowbite-svelte-icons";
   import QuotationInput from "../components/QuotationInput.svelte";
 
   let file: File | null = null;
   let fileInput: HTMLInputElement | null = null;
-  let uploaded = false;
-  let uploadedTimeout: NodeJS.Timeout | null = null;
+  let toastIsError = false;
+  let toastText = "";
+  let toastShowTimeout: NodeJS.Timeout | null = null;
+  const showToast = (text: string, isError = false, duration_ms = 4000) => {
+    if (toastShowTimeout) {
+      clearTimeout(toastShowTimeout);
+    }
+    toastText = text;
+    toastShowTimeout = setTimeout(() => {
+      toastText = "";
+    }, duration_ms);
+    toastIsError = isError;
+  };
   import { type QuotationInput as QuotationInputType } from "$lib/types";
   let quotationInput: QuotationInputType | null = null;
   let isLoading = false;
@@ -17,27 +28,40 @@
     if (input.files && input.files.length > 0) {
       file = input.files[0];
       if (!file.type.includes("pdf")) {
-        alert("Please upload a PDF file");
+        console.log("Error invalid file type");
+        showToast("Please upload a PDF file", true);
         return;
       }
       isLoading = true;
-      if (uploadedTimeout) {
-        clearTimeout(uploadedTimeout);
-      }
-      uploaded = true;
-      uploadedTimeout = setTimeout(() => {
-        uploaded = false;
-      }, 3000);
       const formData = new FormData();
       formData.append("file", file);
-      const resp = await fetch("/quotation/input", {
+      console.log("Uploading...");
+      const upload_resp = await fetch("/quotation/upload", {
         method: "POST",
         body: formData,
       });
-      const resp_json = await resp.json();
-      console.log(resp_json.data);
-      quotationInput = resp_json.data.quotation_input;
+      if (!upload_resp.ok) {
+        console.log("Error uploading");
+        isLoading = false;
+        showToast("Failed to upload file", true);
+        return;
+      }
+      console.log("Uploaded!");
+      showToast("Uploaded! Extracting proposal info...");
+      console.log("Extracting...");
+      const input_resp = await fetch("/quotation/input", {
+        method: "GET",
+      });
+      if (!input_resp.ok) {
+        console.log("Error extracting");
+        isLoading = false;
+        showToast("Failed to extract proposal info", true);
+        return;
+      }
+      console.log("Extracted!");
+      const resp_json = await input_resp.json();
       isLoading = false;
+      quotationInput = resp_json.data.quotation_input;
       //   quotationInput = {
       //     reinsured_name: "FEKAN HOWELL",
       //     broker_name: "RSI",
@@ -52,7 +76,7 @@
       //       "AUDIT, TAX AND ADVISORY SERVICES(CERTIFIED PUBLIC ACCOUNTANTS)",
       //     loss_of_documents: true,
       //     libel_and_slander: true,
-      //     dishonest_employer: true,
+      //     dishonest_employees: true,
       //     retroactive_cover: false,
       //   };
     }
@@ -78,21 +102,29 @@
 </script>
 
 <Main {isLoading}>
-  {#if uploaded}
+  {#if toastText}
     <Toast
       class="absolute top-0 right-0 toast"
-      on:close={() => (uploaded = false)}
-      color="green"
+      on:close={() => (toastText = "")}
+      color={toastIsError ? "red" : "green"}
     >
       <svelte:fragment slot="icon">
-        <CheckCircleSolid class="w-5 h-5" />
-        <span class="sr-only">Check icon</span>
+        {#if toastIsError}
+          <CloseCircleSolid class="w-5 h-5" />
+        {:else}
+          <CheckCircleSolid class="w-5 h-5" />
+        {/if}
       </svelte:fragment>
-      Uploaded successfully!
+      {toastText}
     </Toast>
   {/if}
   {#if quotationInput}
-    <QuotationInput {quotationInput} bind:isLoading open={!!quotationInput} />
+    <QuotationInput
+      {quotationInput}
+      {showToast}
+      bind:isLoading
+      open={!!quotationInput}
+    />
   {/if}
   <div
     class="z-10 justify-center items-center h-screen flex flex-col space-y-20"

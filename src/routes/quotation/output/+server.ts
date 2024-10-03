@@ -1,20 +1,25 @@
-import { json, error, type RequestEvent } from '@sveltejs/kit';
-import { execSync } from "child_process";
-import { writeFileSync } from "fs";
+import type { QuotationOutput } from '$lib/types';
+import { json, type RequestEvent } from '@sveltejs/kit';
+import { API_BASE_URL } from '$lib/consts';
 
 export async function POST(event: RequestEvent) {
-    const req_json = await event.request.json()
-    const req_json_str = JSON.stringify(req_json);
-    writeFileSync("uploads/quotation_input.json", req_json_str);
-    console.log(req_json_str)
-    const output = execSync(`python -m kenyare.quotation.output`, { encoding: 'utf-8', });
-    console.log("Executed python output");
-    console.log(output);
-    const quotationOutput = JSON.parse(output);
-    console.log(quotationOutput["excel_download_url"]);
+    const req_json = await event.request.json();
+    const quotation_input: QuotationOutput = req_json.quotation_input;
+    const resp = await fetch(`${API_BASE_URL}/quotation/output`, {
+        method: "POST",
+        body: JSON.stringify({ quotation_input }),
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        },
+    });
+    const resp_json = await resp.json();
+    const quotation_output: QuotationOutput = resp_json.data.quotation_output;
+    console.log(`quotation_output: ${JSON.stringify(quotation_output)}`);
     return json({
         success: true,
-        data: { "quotation_output": quotationOutput }
+        data: { quotation_output }
     });
+
 
 }

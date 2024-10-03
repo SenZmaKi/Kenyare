@@ -14,8 +14,8 @@ class QuotationInput(TypedDict):
     profession: str
     loss_of_documents: bool
     libel_and_slander: bool
-    dishonest_employer: bool
-    retroactive: bool
+    dishonest_employees: bool
+    retroactive_cover: bool
 
 
 
@@ -40,8 +40,9 @@ class QuotationOutput(TypedDict):
     A_B_C: float
     loss_of_documents: float 
     libel_and_slander: float 
-    dishonest_employer: float
+    dishonest_employees: float
     basic_premium: float
     levies: float
     sd: float
     total_premium: float
+    excel_download_url: str

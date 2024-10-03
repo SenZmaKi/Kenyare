@@ -14,6 +14,7 @@
   export let quotationInput: QuotationInput;
   export let open: boolean;
   export let isLoading: boolean;
+  export let showToast: (text: string, isError?: boolean) => void;
   function convertQuotationInputToProperFormat(quotationInput: QuotationInput) {
     return {
       reinsured_name: quotationInput.reinsured_name,
@@ -38,26 +39,38 @@
       profession: quotationInput.profession,
       loss_of_documents: quotationInput.loss_of_documents,
       libel_and_slander: quotationInput.libel_and_slander,
-      dishonest_employer: quotationInput.dishonest_employer,
+      dishonest_employees: quotationInput.dishonest_employees,
       retroactive_cover: quotationInput.retroactive_cover,
     };
   }
   async function generateQuotation() {
     open = false;
     isLoading = true;
-    await new Promise((r) => setTimeout(r, 4000));
     const properQuotationInput =
       convertQuotationInputToProperFormat(quotationInput);
+    console.log(
+      `properQuotationInput: ${JSON.stringify(properQuotationInput)}`
+    );
+    console.log("Generating quotation...");
     const resp = await fetch("/quotation/output", {
       method: "POST",
-      body: JSON.stringify(properQuotationInput),
+      body: JSON.stringify({ quotation_input: properQuotationInput }),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
     });
+    if (!resp.ok) {
+      console.log("Error generating quotation");
+      isLoading = false;
+      open = false;
+      showToast("Failed to generate quotation", true);
+      return;
+    }
+    console.log("Quotation generated!");
     const resp_json = await resp.json();
     $quotationOutput = resp_json.data.quotation_output;
+    console.log($quotationOutput);
     isLoading = false;
     goto("/quotation/output/");
   }
@@ -201,10 +214,10 @@
           />
         </div>
         <div class="pb-1 items-center flex flex-col">
-          <Label>Dishonest employer</Label>
+          <Label>Dishonest employees</Label>
           <Toggle
             class="hover:cursor-pointer"
-            bind:checked={quotationInput.dishonest_employer}
+            bind:checked={quotationInput.dishonest_employees}
           />
         </div>
 
