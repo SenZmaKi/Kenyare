@@ -45,6 +45,7 @@ declare module '$env/static/private' {
 	export const DOCUMENTS: string;
 	export const DriverData: string;
 	export const EDITOR: string;
+	export const EFC_10476: string;
 	export const EXE4J_JAVA_HOME: string;
 	export const GIT_ASKPASS: string;
 	export const GOOS: string;
@@ -124,11 +125,7 @@ declare module '$env/static/private' {
 	export const VSCODE_GIT_ASKPASS_NODE: string;
 	export const VSCODE_GIT_IPC_HANDLE: string;
 	export const windir: string;
-	export const WSLENV: string;
-	export const WT_PROFILE_ID: string;
-	export const WT_SESSION: string;
 	export const ZES_ENABLE_SYSMAN: string;
-	export const _OLD_VIRTUAL_PATH: string;
 	export const _OLD_VIRTUAL_PROMPT: string;
 }
 
@@ -180,6 +177,7 @@ declare module '$env/dynamic/private' {
 		DOCUMENTS: string;
 		DriverData: string;
 		EDITOR: string;
+		EFC_10476: string;
 		EXE4J_JAVA_HOME: string;
 		GIT_ASKPASS: string;
 		GOOS: string;
@@ -259,11 +257,7 @@ declare module '$env/dynamic/private' {
 		VSCODE_GIT_ASKPASS_NODE: string;
 		VSCODE_GIT_IPC_HANDLE: string;
 		windir: string;
-		WSLENV: string;
-		WT_PROFILE_ID: string;
-		WT_SESSION: string;
 		ZES_ENABLE_SYSMAN: string;
-		_OLD_VIRTUAL_PATH: string;
 		_OLD_VIRTUAL_PROMPT: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
