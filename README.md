@@ -1,3 +1,71 @@
+# Installation
+
+- Clone the repository using [Git](https://github.com/git-guides/install-git)
+  ```bash
+  git clone https://github.com/SenZmaKi/Kenyare.git
+  cd Kenyare
+  ```
+- Place your [Stack AI](https://www.stack-ai.com/) credentials in `kenyare/credentials.json`
+
+- Install [Python 3.12.4](https://www.python.org/downloads/release/python-3124/) or higher then run
+
+  - Create virtual environment
+    ```bash
+    python -m venv .venv
+    ```
+  - Activate virtual environment
+
+    - Linux/Mac
+      ```bash
+      source .venv/bin/activate
+      ```
+    - Windows
+
+      ```bash
+      .venv\Scripts\activate
+      ```
+
+  - Install dependencies
+    ```bash
+    pip install -r kenyare/requirements.txt
+    ```
+  - Run the backend api server
+
+    ```bash
+    python -m kenyare.server
+    ```
+
+    By default the server will run on port `5000`. You can change the port by setting the `FLASK_PORT` environment variable.
+
+- Install [Node.js 22.9.0](https://nodejs.org/en/download/package-manager) or higher then run
+
+  - Install dependencies
+
+    ```bash
+    npm install
+    ```
+
+  - Run the frontend server
+
+    - Development
+
+      ```bash
+      npm run dev
+      ```
+
+      Navigate to [localhost:5173](http://localhost:5173) on your browser. You can change the port by setting the `VITE_DEV_PORT` environment variable.
+
+    - Production
+
+      ```bash
+      npm run build
+      npm run preview
+      ```
+
+      Navigate to [localhost:4173](http://localhost:4173) on your browser. You can change the port by setting the `VITE_PROD_PORT` environment variable.
+
+    By default the frontend server will make backend api requests to [localhost:5000](http://localhost:5000) set the `FLASK_PORT` environment variable to change the port.
+
 # Problem Description
 
 The current process of handling Professional Indemnity Insurance (PII) quotation requests is largely manual, involving the analysis of proposal forms and associated documents. This approach is time-consuming and labor-intensive, resulting in significant delays in the submission of quotes to our business partners. Presently, we rely on an Excel template for data entry and quote generation, which not only increases the likelihood of errors but also hampers efficiency and responsiveness.
