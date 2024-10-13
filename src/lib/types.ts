@@ -1,4 +1,6 @@
 export type QuotationInput = {
+  is_profitable: boolean;
+  financial_summary: string;
   reinsured_name: string;
   broker_name: string;
   insured_name: string;
@@ -22,6 +24,7 @@ export type RateValueOriginal = {
 };
 
 export type QuotationOutput = {
+  input: QuotationInput;
   partners: RateValueOriginal;
   qualified_assistants: RateValueOriginal;
   unqualified_assistants: RateValueOriginal;
@@ -45,7 +48,29 @@ export type QuotationOutput = {
 };
 
 
-export const testQuotationOutput = {
+export const testQuotationInput: QuotationInput = {
+  is_profitable: true,
+  financial_summary:
+    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+  reinsured_name: "FEKAN HOWELL",
+  broker_name: "RSI",
+  insured_name: "FIRST ASSURANCE",
+  partners_count: 3,
+  qualified_assistants_count: 7,
+  unqualified_assistants_count: 0,
+  others_count: 0,
+  annual_fees: 70_000_000,
+  limit_of_indemnity: 100_000_000,
+  profession:
+    "AUDIT, TAX AND ADVISORY SERVICES(CERTIFIED PUBLIC ACCOUNTANTS)",
+  loss_of_documents: true,
+  libel_and_slander: true,
+  dishonest_employees: true,
+  retroactive_cover: false,
+};
+
+export const testQuotationOutput: QuotationOutput = {
+  input: testQuotationInput,
   partners: {
     rate: 3600,
     value: 10800.0,

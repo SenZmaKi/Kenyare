@@ -9,7 +9,7 @@ def make_excel(
     quotation_output: QuotationOutput,
     save_path: str,
 ):
-    workbook = load_workbook("kenyare/template.xlsx")
+    workbook = load_workbook("kenyare/quotation/template.xlsx")
     sheet = workbook.active
     if sheet is None:
         raise Exception("Invalid sheet")

@@ -2,6 +2,9 @@ from typing import Any, TypedDict
 
 
 class QuotationInput(TypedDict):
+    is_profitable: bool
+    financial_summary: str
+    
     insured_name: str
     reinsured_name: str
     broker_name: str
@@ -26,6 +29,7 @@ class RateValueOriginal(TypedDict):
 
 
 class QuotationOutput(TypedDict):
+    input: QuotationInput
     partners: RateValueOriginal
     qualified_assistants: RateValueOriginal
     unqualified_assistants: RateValueOriginal

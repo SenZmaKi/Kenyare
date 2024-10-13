@@ -45,7 +45,7 @@ declare module '$env/static/private' {
 	export const DOCUMENTS: string;
 	export const DriverData: string;
 	export const EDITOR: string;
-	export const EFC_10476: string;
+	export const EFC_7844: string;
 	export const EXE4J_JAVA_HOME: string;
 	export const GIT_ASKPASS: string;
 	export const GOOS: string;
@@ -177,7 +177,7 @@ declare module '$env/dynamic/private' {
 		DOCUMENTS: string;
 		DriverData: string;
 		EDITOR: string;
-		EFC_10476: string;
+		EFC_7844: string;
 		EXE4J_JAVA_HOME: string;
 		GIT_ASKPASS: string;
 		GOOS: string;

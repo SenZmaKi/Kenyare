@@ -2,7 +2,6 @@ import json
 from kenyare.quotation.common import QuotationInput, QuotationOutput
 
 
-
 class Constants:
     partner_rate = 3600
     qualified_assistant_rate = 3000
@@ -106,6 +105,7 @@ def get_quotation_output(input: QuotationInput) -> QuotationOutput:
         basic_premium += dishonest_employees
     total_premium = basic_premium + Constants.levies + Constants.sd
     return QuotationOutput(
+        input=input,
         partners={
             "rate": Constants.partner_rate,
             "value": partners,
@@ -157,9 +157,10 @@ def get_quotation_output(input: QuotationInput) -> QuotationOutput:
     )
 
 
-
 def test():
     input: QuotationInput = {
+        "is_profitable": True,
+        "financial_summary": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
         "insured_name": "FEKAN HOWELL",
         "reinsured_name": "FIRST ASSURANCE",
         "broker_name": "RSI",

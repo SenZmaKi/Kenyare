@@ -1,15 +1,11 @@
 <script lang="ts">
-  import {
-    Table,
-    TableBodyCell,
-    TableBodyRow,
-    TableHead,
-    Button,
-  } from "flowbite-svelte";
+  import { Table, TableBodyCell, TableBodyRow, Button } from "flowbite-svelte";
   import { DownloadSolid } from "flowbite-svelte-icons";
   import Main from "../../../components/Main.svelte";
   import { quotationOutput as quotationOutputStore } from "$lib/store";
   import { testQuotationOutput } from "$lib/types";
+
+  // let quotationOutput = testQuotationOutput;
   let quotationOutput = $quotationOutputStore;
   function toPercentStr(value: number) {
     return (value * 100).toFixed(3) + "%";
@@ -22,9 +18,14 @@
       <div class="z-10 flex pb-5 justify-center items-center">
         <p class="text-xl pr-5 font-bold">Professional Indemnity Quotation</p>
 
-        <a href={quotationOutput.excel_download_url} download="quotation.xlsx">
+        <a
+          href={quotationOutput.excel_download_url}
+          download={quotationOutput.excel_download_url.split("/")[
+            quotationOutput.excel_download_url.length - 1
+          ]}
+        >
           <Button
-            class="flex p-2 ease-in-out duration-100 hover:scale-110"
+            class="flex p-2 gap-2 ease-in-out duration-300 hover:scale-110"
             color="green"
           >
             <p>Download Excel</p>
@@ -33,7 +34,27 @@
         </a>
       </div>
       <Table class="border " striped={true} hoverable={true}>
-        <TableHead></TableHead>
+        <TableBodyRow>
+          <TableBodyCell>Reinsured</TableBodyCell>
+          <TableBodyCell>{quotationOutput.input.reinsured_name}</TableBodyCell>
+          <TableBodyCell></TableBodyCell>
+          <TableBodyCell></TableBodyCell>
+          <TableBodyCell></TableBodyCell>
+        </TableBodyRow>
+        <TableBodyRow>
+          <TableBodyCell>Broker</TableBodyCell>
+          <TableBodyCell>{quotationOutput.input.broker_name}</TableBodyCell>
+          <TableBodyCell></TableBodyCell>
+          <TableBodyCell></TableBodyCell>
+          <TableBodyCell></TableBodyCell>
+        </TableBodyRow>
+        <TableBodyRow>
+          <TableBodyCell>Insured</TableBodyCell>
+          <TableBodyCell>{quotationOutput.input.insured_name}</TableBodyCell>
+          <TableBodyCell></TableBodyCell>
+          <TableBodyCell></TableBodyCell>
+          <TableBodyCell></TableBodyCell>
+        </TableBodyRow>
         <TableBodyRow>
           <TableBodyCell>Partners/Principal</TableBodyCell>
           <TableBodyCell>{quotationOutput.partners.original}</TableBodyCell>

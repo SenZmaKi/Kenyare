@@ -1,6 +1,7 @@
+import os
 from flask import Flask, request, jsonify
 from kenyare.quotation.excel import make_excel
-from kenyare.quotation.stack import get_quotation_input, upload_file
+from kenyare.quotation.stack import get_quotation_input, upload_files
 from kenyare.quotation.output import get_quotation_output
 
 app = Flask(__name__)
@@ -10,8 +11,9 @@ app = Flask(__name__)
 def quotation_upload():
     if not request.json:
         return jsonify({"error": "No JSON in request"}), 400
-    file_path = request.json["file_path"]
-    upload_file(file_path)
+    proposal_path = request.json["proposal_path"]
+    audit_path = request.json["audit_path"]
+    upload_files(proposal_path, audit_path)
     return jsonify({"data": {}}), 200
 
 
@@ -44,4 +46,4 @@ def quotation_output():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=int(os.getenv("FLASK_PORT", 5000)))
