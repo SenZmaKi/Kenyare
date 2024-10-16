@@ -1,4 +1,5 @@
 from functools import cache
+from base64 import b64encode, b64decode
 from typing import TypedDict, cast
 import requests
 import json
@@ -19,16 +20,22 @@ class Credentials(TypedDict):
     public_api_key: str
 
 
+def base64_encode_credentials():
+    with open("kenyare/credentials.json") as json_creds:
+        with open("kenyare/credentials.txt", "w") as base64_creds:
+            encoded = b64encode(json_creds.read().encode()).decode()
+            base64_creds.write(encoded)
+
+
 @cache
-def load_credentials() -> Credentials:
-    try:
+def load_credentials(from_json=False) -> Credentials:
+    if from_json:
         with open("kenyare/credentials.json") as f:
-            try:
-                return json.load(f)
-            except json.JSONDecodeError:
-                raise Exception("Invalid JSON in credentials.json")
-    except FileNotFoundError:
-        raise Exception("credentials.json not found")
+            return json.load(f)
+    else:
+        with open("kenyare/credentials.txt") as f:
+            decoded = b64decode(f.read().encode()).decode()
+            return json.loads(decoded)
 
 
 def upload_file(file_path: str, node_id: str, file_name: str) -> requests.Response:

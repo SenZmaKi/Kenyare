@@ -1,11 +1,11 @@
 # Installation
 
 - Clone the repository using [Git](https://github.com/git-guides/install-git)
+
   ```bash
   git clone https://github.com/SenZmaKi/Kenyare.git
   cd Kenyare
   ```
-- Place your [Stack AI](https://www.stack-ai.com/) credentials in `kenyare/credentials.json`
 
 - Install [Python 3.12.4](https://www.python.org/downloads/release/python-3124/) or higher then run
 
