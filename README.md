@@ -74,7 +74,7 @@ As the insurance industry evolves and the demand for timely and accurate quotes 
 
 # Proposed solution
 
-he proposed solution is an AI-powered bot designed to automate the processing of Professional Indemnity Insurance (PII) quotation requests. This bot will autonomously handle the majority of the process, minimizing the need for manual input and significantly reducing time delays.
+The proposed solution is an AI-powered bot designed to automate the processing of Professional Indemnity Insurance (PII) quotation requests. This bot will autonomously handle the majority of the process, minimizing the need for manual input and significantly reducing time delays.
 
 # System diagram
 
