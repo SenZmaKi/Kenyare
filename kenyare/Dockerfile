@@ -22,15 +22,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir requests healthcheck
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir requests healthcheck
 
-# Create a non-root user and switch to it
-RUN useradd -m backendserviceacc && chown -R backendserviceacc:backendserviceacc /app
+# Create necessary directories
+RUN mkdir -p /app/kenyare/logs /app/kenyare/static/outputs
+
+# Create a non-root user and set permissions
+RUN useradd -m backendserviceacc && \
+    chown -R backendserviceacc:backendserviceacc /app
+
+# Copy the application code
+COPY . .
+
+# Set final permissions
+RUN chown -R backendserviceacc:backendserviceacc /app
+
+# Switch to non-root user
 USER backendserviceacc
 
 # Configure logging
-RUN mkdir -p /app/kenyare/logs
 ENV LOG_PATH=/app/kenyare/logs/app.log
 
 # Add healthcheck
