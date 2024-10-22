@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kenyare-backend
+  namespace: kenyare
+spec:
+  selector:
+    app: kenyare-backend
+  ports:
+  - port: 80
+    targetPort: 5000
+  type: ClusterIP

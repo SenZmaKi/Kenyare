@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kenyare-backend
+  namespace: kenyare
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kenyare-backend
+  template:
+    metadata:
+      labels:
+        app: kenyare-backend
+    spec:
+      containers:
+      - name: kenyare-backend
+        image: emergetech.azurecr.io/kenyare:latest
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        volumeMounts:
+        - name: logs
+          mountPath: /app/kenyare/logs
+        - name: static-files
+          mountPath: /app/kenyare/static/outputs
+      volumes:
+      - name: logs
+        emptyDir: {}
+      - name: static-files
+        persistentVolumeClaim:
+          claimName: kenyare-static-files
