@@ -7,7 +7,9 @@ async function saveFile(data: FormData, fileKey: string): Promise<string> {
     const file = data.get(fileKey) as File | null;
 
     if (!file) throw error(400, `No file found for key: ${fileKey}`);
-    const filePath = path.join('uploads', file.name);
+    const uploadsDir = 'uploads';
+    if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
+    const filePath = path.join(uploadsDir, file.name);
     const arrayBuffer = await file.arrayBuffer();
     const dataView = new DataView(arrayBuffer);
     await fs.promises.writeFile(filePath, dataView);
