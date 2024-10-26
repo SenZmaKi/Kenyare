@@ -1,0 +1,14 @@
+{
+  "apps": [
+    {
+      "name": "frontend-server",
+      "script": "pm2-npm.js",
+      "args": "run preview"
+    },
+    {
+      "name": "backend-server",
+      "script": "python",
+      "args": "-m kenyare.server"
+    }
+  ]
+}
