@@ -3,12 +3,10 @@ import fs from 'fs';
 import path from 'path';
 import { API_BASE_URL } from '$lib/consts';
 
-async function saveFile(data: FormData, fileKey: string): Promise<string> {
+async function saveFile(data: FormData, fileKey: string, uploadsDir: string): Promise<string> {
     const file = data.get(fileKey) as File | null;
 
     if (!file) throw error(400, `No file found for key: ${fileKey}`);
-    const uploadsDir = 'uploads';
-    if (!fs.existsSync(uploadsDir)) await fs.promises.mkdir(uploadsDir);
     const filePath = path.join(uploadsDir, file.name);
     const arrayBuffer = await file.arrayBuffer();
     const dataView = new DataView(arrayBuffer);
@@ -19,9 +17,11 @@ async function saveFile(data: FormData, fileKey: string): Promise<string> {
 export async function POST(event: RequestEvent) {
     const data = await event.request.formData();
 
+    const uploadsDir = 'uploads';
+    if (!fs.existsSync(uploadsDir)) await fs.promises.mkdir(uploadsDir);
     const [financialAuditPath, proposalFormPath] = await Promise.all([
-        saveFile(data, 'financialAudit'),
-        saveFile(data, 'proposalForm'),
+        saveFile(data, 'financialAudit', uploadsDir),
+        saveFile(data, 'proposalForm', uploadsDir),
     ]);
 
     await fetch(`${API_BASE_URL}/quotation/upload`, {
