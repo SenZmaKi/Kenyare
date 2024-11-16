@@ -104,6 +104,7 @@ def get_quotation_input() -> QuotationInput:
     user_id = creds["user_id"]
     public_api_key = creds["public_api_key"]
     flow_response = run_flow(flow_id, org_id, user_id, public_api_key)
+    print(flow_response.text)
     input_match = re.findall(r"\"out-2\":\s*\"({.*?})\"", flow_response.text)[-1]
     input_match = cast(str, input_match)
     input_match = input_match.replace("\\n", "\n").replace("\\", "")

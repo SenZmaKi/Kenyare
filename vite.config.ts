@@ -4,9 +4,11 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	preview: {
+		host: process.env.VITE_DEV_HOST ?? '127.0.0.1',
 		port: parseInt(process.env.VITE_PROD_PORT ?? "4173")
 	},
 	server: {
+		host: process.env.VITE_DEV_HOST ?? '127.0.0.1',
 		port: parseInt(process.env.VITE_DEV_PORT ?? "5173")
 	}
 });

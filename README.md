@@ -36,6 +36,7 @@
     ```
 
     By default the server will run on port `5000`. You can change the port by setting the `FLASK_PORT` environment variable.
+    By default the server will run on host `127.0.0.1`. You can change the host by setting the `FLASK_HOST` environment variable.
 
 - Install [Node.js 22.9.0](https://nodejs.org/en/download/package-manager) or higher then run
 
@@ -53,7 +54,7 @@
       npm run dev
       ```
 
-      Navigate to [localhost:5173](http://localhost:5173) on your browser. You can change the port by setting the `VITE_DEV_PORT` environment variable.
+      Navigate to [localhost:5173](http://127.0.0.1:5173) on your browser. You can change the port by setting the `VITE_DEV_PORT` environment variable.
 
     - Production
 
@@ -62,9 +63,9 @@
       npm run preview
       ```
 
-      Navigate to [localhost:4173](http://localhost:4173) on your browser. You can change the port by setting the `VITE_PROD_PORT` environment variable.
+      Navigate to [localhost:4173](http://127.0.0.1:4173) on your browser. You can change the port by setting the `VITE_PROD_PORT` environment variable.
 
-    By default the frontend server will make backend api requests to [localhost:5000](http://localhost:5000) set the `FLASK_PORT` environment variable to change the port.
+    By default the frontend server will make backend api requests to [localhost:5000](http://127.0.0.1:5000) set the `FLASK_PORT` and `FLASK_HOST` environment variables to change the port and host.
 
 # Problem Description
 
