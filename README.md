@@ -16,15 +16,15 @@
   cd Kenyare
   ```
 
-- Install Poppler and add it to the PATH
+- Install Poppler 24.08.0 or higher and add it to PATH
 
   - Linux/Mac
     - Install Poppler using your package manager
 
   - Windows
-    - Download the latest version of Poppler from [here](https://github.com/oschwartz10612/poppler-windows)
+    - Download Poppler from [this link](https://github.com/oschwartz10612/poppler-windows/releases/download/v24.08.0-0/Release-24.08.0-0.zip)
     - Extract the downloaded file
-    - Add the extracted folder to the PATH
+    - Add the bin folder `Release-24.08.0-0\poppler-24.08.0\Library\bin\` to PATH
 
 - Install [Python 3.12.4](https://www.python.org/downloads/release/python-3124/) or higher then run
 

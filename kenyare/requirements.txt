@@ -1,5 +1,5 @@
 # python>=3.12.4
-# poppler==https://github.com/oschwartz10612/poppler-windows/releases/download/v24.08.0-0/Release-24.08.0-0.zip
+# poppler>=https://github.com/oschwartz10612/poppler-windows/releases/download/v24.08.0-0/Release-24.08.0-0.zip
 openpyxl==3.1.5
 flask==3.0.3
 python-dotenv==1.0.1
