@@ -18,12 +18,13 @@
 
 - Install Poppler and add it to the PATH
 
+  - Linux/Mac
+    - Install Poppler using your package manager
+
   - Windows
     - Download the latest version of Poppler from [here](https://github.com/oschwartz10612/poppler-windows)
     - Extract the downloaded file
     - Add the extracted folder to the PATH
-  - Linux/Mac
-    - Install Poppler using your package manager
 
 - Install [Python 3.12.4](https://www.python.org/downloads/release/python-3124/) or higher then run
 

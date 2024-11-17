@@ -1,8 +1,6 @@
 import json
 import os
 import logging
-import sys
-from tracemalloc import start
 from typing import Callable
 from dotenv import load_dotenv
 import openai
@@ -53,7 +51,7 @@ class OpenAIException(Exception):
     pass
 
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = openai.OpenAI()
 if not client.api_key:
     raise OpenAIException("OPENAI_API_KEY environment variable is not set.")
 
