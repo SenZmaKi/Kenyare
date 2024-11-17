@@ -1,6 +1,7 @@
 from typing import Any, TypedDict
 
 
+
 class QuotationInput(TypedDict):
     is_profitable: bool
     financial_summary: str

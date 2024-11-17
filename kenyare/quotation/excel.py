@@ -63,4 +63,6 @@ def make_excel(
     sheet["E33"] = quotation_output["sd"]
     sheet["E34"] = quotation_output["total_premium"]
 
+    with open(save_path, "w"):
+        pass
     workbook.save(save_path)

@@ -1,3 +1,12 @@
+# Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [Installation](#installation)
+- [Environment Variables](#environment-variables)
+- [Problem Description](#problem-description)
+- [Proposed solution](#proposed-solution)
+- [System diagram](#system-diagram)
+
 # Installation
 
 - Clone the repository using [Git](https://github.com/git-guides/install-git)
@@ -6,6 +15,15 @@
   git clone https://github.com/SenZmaKi/Kenyare.git
   cd Kenyare
   ```
+
+- Install Poppler and add it to the PATH
+
+  - Windows
+    - Download the latest version of Poppler from [here](https://github.com/oschwartz10612/poppler-windows)
+    - Extract the downloaded file
+    - Add the extracted folder to the PATH
+  - Linux/Mac
+    - Install Poppler using your package manager
 
 - Install [Python 3.12.4](https://www.python.org/downloads/release/python-3124/) or higher then run
 
@@ -54,7 +72,7 @@
       npm run dev
       ```
 
-      Navigate to [localhost:5173](http://127.0.0.1:5173) on your browser. You can change the port by setting the `VITE_DEV_PORT` environment variable.
+      Navigate to [localhost:5173](http://127.0.0.1:5173) on your browser. You can change the port and host by setting the `VITE_DEV_PORT` and `VITE_DEV_HOST` environment variables.
 
     - Production
 
@@ -63,9 +81,26 @@
       npm run preview
       ```
 
-      Navigate to [localhost:4173](http://127.0.0.1:4173) on your browser. You can change the port by setting the `VITE_PROD_PORT` environment variable.
+      Navigate to [localhost:4173](http://127.0.0.1:4173) on your browser. You can change the port and host by setting the `VITE_PROD_PORT` and `VITE_PROD_PORT` environment variables.
 
     By default the frontend server will make backend api requests to [localhost:5000](http://127.0.0.1:5000) set the `FLASK_PORT` and `FLASK_HOST` environment variables to change the port and host.
+
+# Environment Variables
+
+- Create a `.env` in the root project directory. The environment variables will be automatically loaded.
+
+```
+OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxx # Required
+FLASK_PORT=5000
+FLASK_HOST=127.0.0.1
+VITE_DEV_HOST=127.0.0.1
+VITE_DEV_PORT=5173
+VITE_PROD_HOST=127.0.0.1
+VITE_PROD_PORT=4173
+CLEAR_UPLOADS_DIR=0 # Set to 1 to clear upload directory on first quotation input run
+CLEAR_QUOTATATIONS_DIR=0 # Set to 1 to clear quotations directory on backend server start
+DELETE_UPLOADS=0 # Set to 1 to delete uploaded files after extracting quotation input
+```
 
 # Problem Description
 

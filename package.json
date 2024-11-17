@@ -24,9 +24,10 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"flowbite": "^2.5.1",
-		"flowbite-svelte": "^0.46.18",
-		"flowbite-svelte-icons": "^1.6.1",
+		"dotenv": "^16.4.5",
+		"flowbite": "^2.5.2",
+		"flowbite-svelte": "^0.47.3",
+		"flowbite-svelte-icons": "^1.6.2",
 		"form-data": "^4.0.0",
 		"framer-motion": "^11.7.0"
 	}

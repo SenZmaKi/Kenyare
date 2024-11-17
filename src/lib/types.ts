@@ -51,7 +51,7 @@ export type QuotationOutput = {
 export const testQuotationInput: QuotationInput = {
   is_profitable: true,
   financial_summary:
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+    "For the year ended 31 December 2022, FEKAN Howell and Associates reported a profit before tax of KSh 12,054,644, a significant increase from KSh 3,168,441 in 2021. The revenue reported was KSh 51,513,198, primarily generated from assurance, consultancy, and training services. Administrative and operating expenses totaled KSh 38,025,243, indicating effective cost management. The organization's financial position reflects a healthy balance with assets exceeding liabilities, ensuring a robust capacity for future growth",
   reinsured_name: "FEKAN HOWELL",
   broker_name: "RSI",
   insured_name: "FIRST ASSURANCE",

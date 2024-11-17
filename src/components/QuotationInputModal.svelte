@@ -12,9 +12,9 @@
     ProfileCardOutline,
     UploadOutline,
   } from "flowbite-svelte-icons";
-  import { type QuotationInput } from "$lib/types";
+  import { testQuotationInput, type QuotationInput } from "$lib/types";
   import { goto } from "$app/navigation";
-  export let quotationInput: QuotationInput;
+  export let quotationInput: QuotationInput = testQuotationInput
   export let open: boolean;
   export let showToast: (text: string, isError?: boolean) => void;
   export let showLoading: (task: string) => void;

@@ -20,9 +20,9 @@
 
         <a
           href={quotationOutput.excel_download_url}
-          download={quotationOutput.excel_download_url.split("/")[
-            quotationOutput.excel_download_url.length - 1
-          ]}
+          download={quotationOutput.input.insured_name
+            ? `${quotationOutput.input.insured_name.toLowerCase().replaceAll(" ", "-")}-quotation.xlsx`
+            : "quotation.xlsx"}
         >
           <Button
             class="flex p-2 gap-2 ease-in-out duration-300 hover:scale-110"

@@ -5,10 +5,10 @@ __pycache__/
 .svelte-kit/types/
 .svelte-kit/output/
 uploads/
+static/quotations/
 
 .svelte-kit/ambient.d.ts
 .svelte-kit/non-ambient.d.ts
 test.txt
 credentials.json
-llm_prompt.txt
 .env

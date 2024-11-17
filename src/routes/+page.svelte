@@ -1,18 +1,23 @@
 <script lang="ts">
   import Main from "../components/Main.svelte";
-  import { Toast, Button } from "flowbite-svelte";
-  import { onMount } from "svelte";
+  import { Toast, Button, Helper } from "flowbite-svelte";
+  import { onMount, tick } from "svelte";
   import {
     CheckCircleSolid,
     CloseCircleSolid,
+    TrashBinSolid,
     UploadSolid,
   } from "flowbite-svelte-icons";
   import QuotationInputModal from "../components/QuotationInputModal.svelte";
   import { Fileupload, Label } from "flowbite-svelte";
   import { testQuotationInput, type QuotationInput } from "$lib/types";
 
-  let financialAuditFileList: FileList | undefined = undefined;
-  let proposalFormFileList: FileList | undefined = undefined;
+  let financialAuditFiles: (FileList | undefined | null)[] = [undefined];
+  let proposalFormFile: FileList | undefined = undefined;
+
+  $: if (financialAuditFiles[financialAuditFiles.length - 1]) {
+    financialAuditFiles = [...financialAuditFiles, undefined];
+  }
 
   // let quotationInput: QuotationInput | null = testQuotationInput;
   let quotationInput: QuotationInput | null = null;
@@ -20,7 +25,7 @@
   let toastIsError = false;
   let toastText = "";
   let toastShowTimeout: NodeJS.Timeout | null = null;
-  const defaultHometext = "Welcome to the Kenyare AI Underwriter";
+  const defaultHometext = "Welcome to the Kenyare PI AI Underwriter";
   let homeText = defaultHometext;
 
   function showToast(text: string, isError = false, duration_ms = 4000) {
@@ -67,90 +72,67 @@
     homeText = defaultHometext;
   }
 
-  async function uploadFiles(proposalForm: File, financialAudit: File) {
-    if (!financialAudit.name.endsWith(".pdf")) {
-      showToast("Financial audit must be a PDF", true);
-      return;
-    }
-    if (!proposalForm.name.endsWith(".pdf")) {
-      showToast("Proposal form must be a PDF", true);
-      return;
-    }
-    showLoading("Uploading");
+  async function getQuotationInput(
+    proposalForm: File,
+    financialAudits: File[]
+  ) {
+    console.log("Extracting proposal info.. .");
+    showLoading("Processing");
+    showToast("This may take a while...", false);
     const formData = new FormData();
     formData.append("proposalForm", proposalForm);
-    formData.append("financialAudit", financialAudit);
-    console.log("Uploading...");
+    financialAudits.forEach((f) => formData.append("financialAudit", f));
     let success = false;
+
     try {
-      const upload_resp = await fetch("/quotation/upload", {
+      const resp = await fetch("/quotation/input", {
         method: "POST",
         body: formData,
       });
-      success = upload_resp.ok;
-    } catch (error) {
-      console.error(error);
-    }
-    if (!success) {
-      console.log("Error uploading");
-      resetLoading();
-      showToast("Failed to upload", true);
-      return false;
-    }
-    console.log("Uploaded!");
-    return true;
-  }
-
-  async function getQuotationInput() {
-    showLoading("Extracting proposal info");
-    showToast("This may take a while...", false);
-    console.log("Extracting...");
-    let success = false;
-    try {
-      const input_resp = await fetch("/quotation/input", {
-        method: "GET",
-      });
-      success = input_resp.ok;
+      success = resp.ok;
       if (success) {
-        const resp_json = await input_resp.json();
+        const resp_json = await resp.json();
         quotationInput = resp_json.data.quotation_input;
         console.log("Extracted!");
       }
     } catch (error) {
+      console.log("Error extracting");
       console.error(error);
     }
     resetLoading();
     if (!success) {
-      console.log("Error extracting");
+      resetLoading();
       showToast("Failed to extract proposal info", true);
       return;
     }
   }
 
-  async function uploadAndExtract() {
-    console.log("Upload and extract");
-    if (!proposalFormFileList && !financialAuditFileList) {
+  async function validateAndUpload() {
+    const financialAudits = financialAuditFiles
+      .filter((f) => f !== null && f !== undefined)
+      .map((f) => f[0]);
+    if (!proposalFormFile && !financialAudits) {
       showToast("Please add both files", true);
       return;
     }
-    if (!proposalFormFileList) {
+    if (!proposalFormFile) {
       showToast("Please add a proposal form", true);
       return;
     }
-    if (!financialAuditFileList) {
+    if (!financialAudits.length) {
       showToast("Please add a financial audit", true);
       return;
     }
-    const success = await uploadFiles(
-      proposalFormFileList[0],
-      financialAuditFileList[0]
-    );
-    if (!success) return;
-    await getQuotationInput();
+    const proposalForm = proposalFormFile[0];
+    if (
+      !proposalForm.name.endsWith(".pdf") ||
+      financialAudits.some((f) => !f.name.endsWith(".pdf"))
+    ) {
+      showToast("All files must be in PDF format", true);
+      return;
+    }
+    await getQuotationInput(proposalForm, financialAudits);
   }
-
-  // DEBUG
-  //  $: if (proposalFormFileList && financialAuditFileList) uploadAndExtract();
 
   onMount(() => {
     titleStyle = { transform: "translateX(0)", opacity: 1 };
@@ -197,25 +179,48 @@
       </span>
     </h1>
     <div class="z-10 flex flex-col gap-6 items-center">
-      <div class="z-10 flex gap-6">
-        <Label class="space-y-2">
-          <span>Financial audit</span>
-          <Fileupload bind:files={financialAuditFileList} />
-        </Label>
-        <Label class="space-y-2 ">
-          <span>Proposal form</span>
-          <Fileupload bind:files={proposalFormFileList} />
-        </Label>
+      <div class="z-10 flex gap-10">
+        <div class="space-y-2">
+          <Label>Financial audits and accounts</Label>
+
+          {#each financialAuditFiles as file}
+            {#if file !== null}
+              <div class="flex gap-2 items-baseline">
+                <Fileupload
+                  type="file"
+                  class="hover:cursor-pointer"
+                  bind:files={file}
+                />
+                {#if file}
+                  <Button
+                    size="sm"
+                    on:click={(e) => {
+                      file = null;
+                    }}
+                  >
+                    <TrashBinSolid size="sm" />
+                  </Button>
+                {/if}
+              </div>
+            {/if}
+          {/each}
+        </div>
+        <div class="space-y-2">
+          <Label>PI Proposal form</Label>
+          <Fileupload
+            class="hover:cursor-pointer"
+            bind:files={proposalFormFile}
+          />
+        </div>
       </div>
       <Button
         class="flex gap-2 w-min hover:scale-110 ease-in-out duration-300"
-        on:click={uploadAndExtract}
+        on:click={validateAndUpload}
       >
         <div>Upload</div>
         <UploadSolid />
       </Button>
     </div>
-
     <div />
   </div></Main
 >
