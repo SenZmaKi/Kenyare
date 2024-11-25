@@ -1,6 +1,9 @@
 import os
+# import sys
+# To allow running as a script instead of module i.e., python kenyare/server.py instead of python -m kenyare.server
+# sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import shutil
-import time
 import uuid
 from flask import Flask, request, jsonify
 from kenyare.quotation.excel import make_excel
@@ -52,7 +55,7 @@ def quotation_output():
 
 if __name__ == "__main__":
     app.run(
-        debug=True,
+        debug=os.getenv("FLASK_DEBUG", "1") == "1",
         host=os.getenv("FLASK_HOST", "127.0.0.1"),
         port=int(os.getenv("FLASK_PORT", 5000)),
     )

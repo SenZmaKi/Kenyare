@@ -1,5 +1,4 @@
 import json
-import os
 import logging
 from typing import Callable
 from dotenv import load_dotenv

@@ -19,6 +19,7 @@
 - Install Poppler 24.08.0 or higher and add it to PATH
 
   - Linux/Mac
+
     - Install Poppler using your package manager
 
   - Windows
@@ -94,6 +95,7 @@
 OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxx # Required
 FLASK_PORT=5000
 FLASK_HOST=127.0.0.1
+FLASK_DEBUG=1 # Set to 0 to disable flask debug mode
 VITE_DEV_HOST=127.0.0.1
 VITE_DEV_PORT=5173
 VITE_PROD_HOST=127.0.0.1

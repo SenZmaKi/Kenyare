@@ -1,11 +1,10 @@
 from typing import Any, TypedDict
 
 
-
 class QuotationInput(TypedDict):
     is_profitable: bool
     financial_summary: str
-    
+
     insured_name: str
     reinsured_name: str
     broker_name: str
@@ -20,7 +19,6 @@ class QuotationInput(TypedDict):
     libel_and_slander: bool
     dishonest_employees: bool
     retroactive_cover: bool
-
 
 
 class RateValueOriginal(TypedDict):
@@ -43,8 +41,8 @@ class QuotationOutput(TypedDict):
     profession: RateValueOriginal
     profession_is_confident: bool
     A_B_C: float
-    loss_of_documents: float 
-    libel_and_slander: float 
+    loss_of_documents: float
+    libel_and_slander: float
     dishonest_employees: float
     basic_premium: float
     levies: float

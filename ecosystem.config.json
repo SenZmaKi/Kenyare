@@ -7,8 +7,12 @@
     },
     {
       "name": "backend-server",
+      "interpreter": "none",
       "script": "python",
-      "args": "-m kenyare.server"
+      "args": [
+        "-m",
+        "kenyare.server"
+      ]
     }
   ]
 }
