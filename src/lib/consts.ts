@@ -3,8 +3,8 @@ import path from 'path';
 import fs from 'fs';
 
 const FLASK_PORT = process.env.FLASK_PORT ?? 5000;
-const FLASK_HOST = process.env.FLASK_HOST ?? "http://127.0.0.1";
-export const API_BASE_URL = `${FLASK_HOST}:${FLASK_PORT}`;
+const FLASK_HOST = process.env.FLASK_HOST ?? "127.0.0.1";
+export const API_BASE_URL = `http://${FLASK_HOST}:${FLASK_PORT}`;
 const UPLOADS_DIR = 'uploads';
 export const FINANCIAL_AUDITS_DIR = path.join(UPLOADS_DIR, 'financial-audits');
 export const PROPOSAL_FORMS_DIR = path.join(UPLOADS_DIR, 'proposal-forms');
