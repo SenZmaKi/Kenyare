@@ -6,7 +6,7 @@ __pycache__/
 .svelte-kit/output/
 uploads/
 static/quotations/
-
+kenyare/test
 .svelte-kit/ambient.d.ts
 .svelte-kit/non-ambient.d.ts
 test.txt
