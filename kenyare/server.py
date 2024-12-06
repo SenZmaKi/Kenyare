@@ -1,58 +1,85 @@
 import os
 import shutil
-import time
 import uuid
-from flask import Flask, request, jsonify
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+import uvicorn
+
 from kenyare.quotation.excel import make_excel
 from kenyare.quotation.openai import run_prompt
 from kenyare.quotation.output import get_quotation_output
-from dotenv import load_dotenv
 
-load_dotenv()
-app = Flask(__name__)
+# Create quotations directory
 QUOTATIONS_DIR = "static/quotations"
-if not os.path.exists(QUOTATIONS_DIR):
-    os.makedirs(QUOTATIONS_DIR)
+os.makedirs(QUOTATIONS_DIR, exist_ok=True)
+
+# Clear quotations directory if environment variable is set
 if os.getenv("CLEAR_QUOTATIONS_DIR") == "1":
     shutil.rmtree(QUOTATIONS_DIR)
     os.makedirs(QUOTATIONS_DIR)
 
+# Create FastAPI app
+app = FastAPI()
 
-@app.route("/quotation/input", methods=["POST"])
-def quotation_upload():
-    if not request.json:
-        return jsonify({"error": "No JSON in request"}), 400
-    proposal_path = request.json["proposal_path"]
-    audit_paths = request.json["audit_paths"]
-    quotation_input = run_prompt([*audit_paths, proposal_path])
-    return jsonify({"data": {"quotation_input": quotation_input}}), 200
+# CORS Configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=os.getenv("ALLOWED_ORIGINS", "*").split(","),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+# Pydantic models for request validation
+class QuotationInputRequest(BaseModel):
+    proposal_path: str
+    audit_paths: list[str]
 
-@app.route("/quotation/output", methods=["POST"])
-def quotation_output():
-    if not request.json:
-        return jsonify({"error": "No JSON in request"}), 400
-    quotation_input = request.json["quotation_input"]
-    quotation_output = get_quotation_output(quotation_input)
-    excel_filename = f"{uuid.uuid4()}.xlsx"
-    excel_path = f"{QUOTATIONS_DIR}/{excel_filename}"
-    excel_download_url = f"/quotations/{excel_filename}"
-    make_excel(
-        quotation_input["reinsured_name"],
-        quotation_input["broker_name"],
-        quotation_input["insured_name"],
-        quotation_output,
-        excel_path,
-    )
-    quotation_output["excel_download_url"] = excel_download_url
+class QuotationOutputRequest(BaseModel):
+    quotation_input: dict
 
-    print(f"quotation_output: {quotation_output}")
-    return jsonify({"data": {"quotation_output": quotation_output}}), 200
+@app.post("/quotation/input")
+async def quotation_upload(request: QuotationInputRequest):
+    try:
+        quotation_input = run_prompt([*request.audit_paths, request.proposal_path])
+        return {"data": {"quotation_input": quotation_input}}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/quotation/output")
+async def quotation_output(request: QuotationOutputRequest):
+    try:
+        quotation_input = request.quotation_input
+        quotation_output = get_quotation_output(quotation_input)
+        
+        excel_filename = f"{uuid.uuid4()}.xlsx"
+        excel_path = f"{QUOTATIONS_DIR}/{excel_filename}"
+        excel_download_url = f"/quotations/{excel_filename}"
+        
+        make_excel(
+            quotation_input["reinsured_name"],
+            quotation_input["broker_name"],
+            quotation_input["insured_name"],
+            quotation_output,
+            excel_path,
+        )
+        
+        quotation_output["excel_download_url"] = excel_download_url
+        
+        return {"data": {"quotation_output": quotation_output}}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/")
+async def root():
+    return {"status": "KenyaRE FASTAPI Server is running!"}
 
 if __name__ == "__main__":
-    app.run(
-        debug=True,
-        host=os.getenv("FLASK_HOST", "127.0.0.1"),
-        port=int(os.getenv("FLASK_PORT", 5000)),
+    uvicorn.run(
+        "kenyare.server:app", 
+        host=os.getenv("SERVER_HOST", "localhost"),
+        port=int(os.getenv("SERVER_PORT", "8000")),
+        reload=os.getenv("DEBUG", "false").lower() == "true"
     )
