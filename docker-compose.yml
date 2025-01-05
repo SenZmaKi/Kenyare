@@ -19,3 +19,4 @@ services:
       - "8000:8000"
     environment:
       - ALLOWED_HOSTS=139.59.57.31
+      - OPENAI_API_KEY=NEED_TO_GET_KEY
