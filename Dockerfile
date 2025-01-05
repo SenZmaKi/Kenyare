@@ -23,3 +23,6 @@ EXPOSE 3000 8000
 
 # Command to run both the Svelte frontend and the Python backend
 CMD ["sh", "-c", "npm run preview & python kenyare/server.py"]
+
+# Add a label for the image
+LABEL name="kenyare-multi-stage" version="1.0"

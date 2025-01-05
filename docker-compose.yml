@@ -1,17 +1,17 @@
 version: '3.8'
 services:
-  frontend:
+  kenyare-frontend:
     build: 
       context: .
       dockerfile: Dockerfile.frontend.txt
     ports:
       - "5173:5173"
     depends_on:
-      - backend
+      - kenyare-backend
     environment:
-      - VITE_API_BASE_URL=http://backend:8000
+      - VITE_API_BASE_URL=http://kenyare-backend:8000
 
-  backend:
+  kenyare-backend:
     build: 
       context: .
       dockerfile: Dockerfile.backend.txt

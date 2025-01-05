@@ -24,3 +24,6 @@ EXPOSE 8000
 
 # Command to run the application
 CMD ["python", "-m", "kenyare.server"]
+
+# Add a label for the image
+LABEL name="kenyare-backend" version="1.0"

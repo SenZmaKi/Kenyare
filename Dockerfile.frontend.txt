@@ -10,7 +10,7 @@ RUN apk add --no-cache \
 WORKDIR /kenyare
 
 # Copy package files
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json pnpm-lock.yaml* ./ 
 
 # Install pnpm
 RUN npm install -g pnpm
@@ -29,3 +29,6 @@ EXPOSE 5173
 
 # Command to run the application
 CMD ["pnpm", "run", "preview", "--host", "0.0.0.0"]
+
+# Add a label for the image
+LABEL name="kenyare-frontend" version="1.0"
