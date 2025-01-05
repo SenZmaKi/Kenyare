@@ -6,7 +6,7 @@
   const totalImages = 5;
   setInterval(() => {
     currentImageIndex = (currentImageIndex % totalImages) + 1;
-  }, 5000);
+  }, 8000);
 </script>
 
 <div>

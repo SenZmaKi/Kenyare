@@ -1,0 +1,31 @@
+# Use an official Node runtime as a parent image
+FROM node:20-alpine
+
+# Install system dependencies, including Poppler
+RUN apk add --no-cache \
+    poppler-utils \
+    && rm -rf /var/cache/apk/*
+
+# Set working directory to the project root
+WORKDIR /kenyare
+
+# Copy package files
+COPY package.json pnpm-lock.yaml* ./
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Install project dependencies
+RUN pnpm install
+
+# Copy entire project
+COPY . .
+
+# Build the application
+RUN pnpm run build
+
+# Expose the development port
+EXPOSE 5173
+
+# Command to run the application
+CMD ["pnpm", "run", "preview", "--host", "0.0.0.0"]

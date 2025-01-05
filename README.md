@@ -54,7 +54,7 @@
     python -m kenyare.server
     ```
 
-    By default the server will run on port `5000`. You can change the port by setting the `FLASK_PORT` environment variable.
+    By default the server will run on port `8000`. You can change the port by setting the `FLASK_PORT` environment variable.
     By default the server will run on host `127.0.0.1`. You can change the host by setting the `FLASK_HOST` environment variable.
 
 - Install [Node.js 22.9.0](https://nodejs.org/en/download/package-manager) or higher then run
@@ -84,7 +84,7 @@
 
       Navigate to [localhost:4173](http://127.0.0.1:4173) on your browser. You can change the port and host by setting the `VITE_PROD_PORT` and `VITE_PROD_PORT` environment variables.
 
-    By default the frontend server will make backend api requests to [localhost:5000](http://127.0.0.1:5000) set the `FLASK_PORT` and `FLASK_HOST` environment variables to change the port and host.
+    By default the frontend server will make backend api requests to [localhost:8000](http://127.0.0.1:8000) set the `FLASK_PORT` and `FLASK_HOST` environment variables to change the port and host.
 
 # Environment Variables
 
@@ -92,7 +92,7 @@
 
 ```
 OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxx # Required
-FLASK_PORT=5000
+FLASK_PORT=8000
 FLASK_HOST=127.0.0.1
 VITE_DEV_HOST=127.0.0.1
 VITE_DEV_PORT=5173

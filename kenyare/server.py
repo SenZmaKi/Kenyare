@@ -70,7 +70,7 @@ async def quotation_output(request: QuotationOutputRequest):
         
         return {"data": {"quotation_output": quotation_output}}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 @app.get("/")
 async def root():

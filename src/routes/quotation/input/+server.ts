@@ -18,7 +18,6 @@ async function saveFile(file: File, saveDir: string): Promise<string> {
 export async function POST(event: RequestEvent) {
     const data = await event.request.formData();
 
-
     const proposalFormFile = data.get('proposalForm');
     if (!proposalFormFile) throw error(400, 'No proposal form file found');
     const financialAuditFiles = data.getAll('financialAudit');
@@ -41,14 +40,31 @@ export async function POST(event: RequestEvent) {
         },
     });
 
-    if (DELETE_UPLOADS)
-        Promise.all([...financialAuditPaths, proposalFormPath].map(fs.promises.unlink));
+    // Add error handling for the response
+    if (!resp.ok) {
+        const errorText = await resp.text();
+        console.error('API Error:', errorText);
+        throw error(resp.status, `API request failed: ${errorText}`);
+    }
 
     const resp_json = await resp.json();
+    
+    // Log the full response for debugging
+    console.log('Full API Response:', JSON.stringify(resp_json, null, 2));
+
+    // Add null checks
+    if (!resp_json || !resp_json.data) {
+        throw error(500, 'Invalid response format from API');
+    }
+
     const quotation_input: QuotationInput = resp_json.data.quotation_input;
+    
+    if (!quotation_input) {
+        throw error(500, 'No quotation_input found in API response');
+    }
+
     console.log(`quotation_input: ${JSON.stringify(quotation_input)}`);
     return json({
         data: { quotation_input }
     });
-
 }
