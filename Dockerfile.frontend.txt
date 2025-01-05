@@ -10,7 +10,7 @@ RUN apk add --no-cache \
 WORKDIR /kenyare
 
 # Copy package files
-COPY package.json pnpm-lock.yaml* ./ 
+COPY package.json pnpm-lock.yaml* ./
 
 # Install pnpm
 RUN npm install -g pnpm
@@ -21,8 +21,8 @@ RUN pnpm install
 # Copy entire project
 COPY . .
 
-# Build the application
-RUN pnpm run build
+# Build the application with increased memory limit
+RUN NODE_OPTIONS="--max-old-space-size=2048" pnpm run build
 
 # Expose the development port
 EXPOSE 5173

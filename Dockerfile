@@ -16,7 +16,7 @@ RUN pip install -r requirements.txt
 COPY ./kenyare ./kenyare
 
 # Copy the built Svelte app to the Python backend container
-COPY --from=svelte-build /app/build /app/static
+COPY --from=svelte-build /app/dist /app/static
 
 # Expose ports for both the Svelte frontend and the Python backend
 EXPOSE 3000 8000
