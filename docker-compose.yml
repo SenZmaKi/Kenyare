@@ -21,3 +21,8 @@ services:
     environment:
       - ALLOWED_HOSTS=139.59.57.31
       - OPENAI_API_KEY=NEED_TO_GET_KEY
+    volumes:
+      - kenyare-backend-data:/var/lib/kenyare
+
+volumes:
+  kenyare-backend-data:
