@@ -4,8 +4,8 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile.frontend.txt
-    ports:
-      - "5173:5173"
+    # ports:
+    #   - "5173:5173"
     depends_on:
       - kenyare-backend
     environment:
@@ -26,8 +26,8 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile.backend.txt
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"
     environment:
       - ALLOWED_HOSTS=139.59.57.31
       - OPENAI_API_KEY=NEED_TO_GET_KEY
