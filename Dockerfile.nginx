@@ -1,0 +1,11 @@
+# Use the official NGINX image as a base
+FROM nginx:latest
+
+# Copy custom NGINX configuration file
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Add a label for the image
+LABEL name="kenyare-nginx" version="1.0"
