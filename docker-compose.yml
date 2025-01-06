@@ -11,6 +11,16 @@ services:
     environment:
       - VITE_API_BASE_URL=http://139.59.57.31:8000
       - VITE_PROD_PORT=5173
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
 
   kenyare-backend:
     build: 
@@ -23,6 +33,32 @@ services:
       - OPENAI_API_KEY=NEED_TO_GET_KEY
     volumes:
       - kenyare-backend-data:/var/lib/kenyare
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - kenyare-frontend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
 
 volumes:
   kenyare-backend-data:
