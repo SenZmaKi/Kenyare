@@ -59,6 +59,8 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
+    # If you want to direct backend requests through NGINX as well, 
+    # ensure your nginx.conf has a location block to proxy_pass to kenyare-backend:8000.
 
 volumes:
   kenyare-backend-data:
