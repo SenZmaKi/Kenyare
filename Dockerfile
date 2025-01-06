@@ -22,7 +22,7 @@ COPY --from=svelte-build /app/dist /app/static
 EXPOSE 3000 8000
 
 # Command to run both the Svelte frontend and the Python backend
-CMD ["sh", "-c", "npm run preview & python kenyare/server.py"]
+CMD ["sh", "-c", "npm run preview & python -m kenyare.server"]
 
 # Add a label for the image
 LABEL name="kenyare-multi-stage" version="1.0"
