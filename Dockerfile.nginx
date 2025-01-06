@@ -9,3 +9,8 @@ EXPOSE 80
 
 # Add a label for the image
 LABEL name="kenyare-nginx" version="1.0"
+
+# The CMD instruction is inherited from the base image (nginx:latest). It is implicity
+# passed to the container when it starts. The CMD instruction specifies the command to
+# run when the container starts. In this case, the command is "nginx -g daemon off;".
+# CMD ["nginx", "-g", "daemon off;"]
