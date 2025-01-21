@@ -1,12 +1,11 @@
-# Use an official Node runtime as a parent image
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 
-# Install system dependencies, including Poppler
+# Install system dependencies
 RUN apk add --no-cache \
     poppler-utils \
+    wget \
     && rm -rf /var/cache/apk/*
 
-# Set working directory to the project root
 WORKDIR /kenyare
 
 # Copy package files
@@ -15,20 +14,34 @@ COPY package.json pnpm-lock.yaml* ./
 # Install pnpm
 RUN npm install -g pnpm
 
-# Install project dependencies
+# Install dependencies
 RUN pnpm install
 
-# Copy entire project
+# Copy source
 COPY . .
 
-# Build the application with increased memory limit
+# Build with increased memory to avoid OOM errors due to node_modules directory
 RUN NODE_OPTIONS="--max-old-space-size=2048" pnpm run build
 
-# Expose the development port
+# Production image
+FROM node:20-alpine
+
+WORKDIR /kenyare
+
+# Install only production dependencies
+COPY --from=builder /kenyare/package.json /kenyare/pnpm-lock.yaml ./
+RUN npm install -g pnpm && pnpm install --prod
+
+# Copy built assets
+COPY --from=builder /kenyare/build ./build
+
+# We add a non-root user for ease of access
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER kenyare_user
+
 EXPOSE 5173
 
-# Command to run the application
 CMD ["pnpm", "run", "preview", "--host", "0.0.0.0"]
 
-# Add a label for the image
+# Image metadata
 LABEL name="kenyare-frontend" version="1.0"
