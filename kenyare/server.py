@@ -72,6 +72,10 @@ async def quotation_output(request: QuotationOutputRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
 
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
 @app.get("/")
 async def root():
     return {"status": "KenyaRE FASTAPI Server is running!"}
