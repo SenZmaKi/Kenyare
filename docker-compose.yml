@@ -1,17 +1,19 @@
 version: '3.8'
 
 services:
+  # Frontend service configuration
   kenyare-frontend:
     build: 
       context: .
-      dockerfile: Dockerfile.frontend.txt
+      dockerfile: Dockerfile.frontend.txt  # Dockerfile for building the frontend service
+    ports:
+      - 5173:5173  # Expose port 5173 for frontend service
     depends_on:
-      - kenyare-backend  # This ensures that the backend service spins up before frontend
+      - kenyare-backend  # Ensure backend starts before frontend
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=development  # Set environment to development
       - VITE_API_BASE_URL=${API_BASE_URL}  # API base URL for frontend to communicate with backend
-      - VITE_PROD_PORT=${FRONTEND_PORT:-5173}  # Port for frontend service
-      - HOST=0.0.0.0
+      - HOST=0.0.0.0  # Host for the frontend service
     volumes:
       - /kenyare/node_modules  # Persistent storage for node_modules between container restarts
     deploy:
@@ -22,23 +24,26 @@ services:
         reservations:
           cpus: '0.5'  # Reserve 0.5 cores
           memory: 512M  # Reserve 512MB memory
-    restart: unless-stopped
+    restart: unless-stopped  # Restart policy
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173"]  # Health check command
-      interval: 30s
-      timeout: 10s
+      interval: 30s  # Interval between health checks
+      timeout: 10s  # Timeout for health check
       retries: 3  # Number of retries before marking as unhealthy
       start_period: 40s  # Start period before health checks begin
     logging:
       driver: "json-file"
       options:
-        max-size: "200k"  
-        max-file: "10"  
+        max-size: "200k"  # Max size of log file
+        max-file: "10"  # Max number of log files
 
+  # Backend service configuration
   kenyare-backend:
     build: 
       context: .
-      dockerfile: Dockerfile.backend.txt
+      dockerfile: Dockerfile.backend.txt  # Dockerfile for building the backend service
+    ports:
+      - 8000:8000  # Expose port 8000 for backend service
     environment:
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}  # Allowed hosts for backend
       - OPENAI_API_KEY=${OPENAI_API_KEY}  # API key for OpenAI
@@ -56,29 +61,29 @@ services:
     restart: unless-stopped  # Restart policy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]  # Health check command
-      interval: 30s
-      timeout: 10s 
-      retries: 3 
-      start_period: 40s
+      interval: 30s  # Interval between health checks
+      timeout: 10s  # Timeout for health check
+      retries: 3  # Number of retries before marking as unhealthy
+      start_period: 40s  # Start period before health checks begin
     logging:
       driver: "json-file"
       options:
-        max-size: "200k"  
-        max-file: "10"  
+        max-size: "200k"  # Max size of log file
+        max-file: "10"  # Max number of log files
 
   # NGINX service configuration
   nginx:
     build:
       context: .
-      dockerfile: Dockerfile.nginx
+      dockerfile: Dockerfile.nginx  # Dockerfile for building the NGINX service
     ports:
       - "${NGINX_PORT:-80}:80"  # Expose port 80 (HTTP traffic) for NGINX
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro  # Mount NGINX configuration file
       - ./static:/usr/share/nginx/html/static:ro  # Mount static files directory
     depends_on:
-      - kenyare-frontend  # To ensure frontend starts before NGINX
-      - kenyare-backend  # To ensure backend starts before NGINX
+      - kenyare-frontend  # Ensure frontend starts before NGINX
+      - kenyare-backend  # Ensure backend starts before NGINX
     deploy:
       resources:
         limits:
@@ -90,14 +95,14 @@ services:
     restart: unless-stopped  # Restart policy
     healthcheck:
       test: ["CMD", "nginx", "-t"]  # Health check command to test NGINX configuration
-      interval: 30s  
-      timeout: 10s  
-      retries: 3 
+      interval: 30s  # Interval between health checks
+      timeout: 10s  # Timeout for health check
+      retries: 3  # Number of retries before marking as unhealthy
     logging:
       driver: "json-file"
       options:
-        max-size: "200k"  
-        max-file: "10"  
+        max-size: "200k"  # Max size of log file
+        max-file: "10"  # Max number of log files
 
 volumes:
   kenyare-backend-data:
