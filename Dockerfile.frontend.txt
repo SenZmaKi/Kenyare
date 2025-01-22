@@ -8,28 +8,32 @@ RUN apk add --no-cache \
 
 WORKDIR /kenyare
 
-# Create non-root user first
-RUN addgroup -S kenyare_group && adduser -S kenyare_user -G kenyare_group
+# Install pnpm globally before switching to non-root user
+RUN npm install -g pnpm
 
-# Set proper ownership of the working directory
-RUN chown -R kenyare_user:kenyare_group /kenyare
+# Create non-root user
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Set proper ownership of the working directory and npm global directory
+RUN mkdir -p /home/appuser/.npm && \
+    chown -R appuser:appgroup /home/appuser/.npm && \
+    chown -R appuser:appgroup /kenyare
 
 # Switch to non-root user
-USER kenyare_user
+USER appuser
 
 # Copy package files with correct ownership
-COPY --chown=kenyare_user:kenyare_group package.json pnpm-lock.yaml* ./
+COPY --chown=appuser:appgroup package.json pnpm-lock.yaml* ./
 
-# Install pnpm and dependencies
-RUN npm install -g pnpm && \
-    pnpm install
+# Install dependencies as non-root user
+RUN pnpm install
 
 # Copy the rest of the application with correct ownership
-COPY --chown=kenyare_user:kenyare_group . .
+COPY --chown=appuser:appgroup . .
 
 # Ensure temp directory exists and has correct permissions
 RUN mkdir -p /kenyare/node_modules/.vite && \
-    chown -R kenyare_user:kenyare_group /kenyare/node_modules/.vite
+    mkdir -p /kenyare/node_modules/.pnpm
 
 EXPOSE 5173
 
