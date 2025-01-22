@@ -33,9 +33,9 @@ COPY --chown=kenyare_user:kenyare_group . .
 
 # Ensure temp directory exists and has correct permissions
 RUN mkdir -p /kenyare/node_modules/.vite && \
-    mkdir -p /kenyare/node_modules/.pnpm \
-    chown -R kenyare_user:kenyare_group /kenyare/node_modules/.vite && \
-    chown -R kenyare_user:kenyare_group /kenyare/node_modules/.pnpm
+    mkdir -p /kenyare/node_modules/.pnpm && \
+    chown kenyare_user:kenyare_group /kenyare/node_modules/.vite && \
+    chown kenyare_user:kenyare_group /kenyare/node_modules/.pnpm
 
 EXPOSE 5173
 
