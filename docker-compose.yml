@@ -1,105 +1,107 @@
 version: '3.8'
+
 services:
   kenyare-frontend:
     build: 
       context: .
       dockerfile: Dockerfile.frontend.txt
     depends_on:
-      - kenyare-backend
+      - kenyare-backend  # This ensures that the backend service spins up before frontend
     environment:
-      - VITE_API_BASE_URL=${API_BASE_URL}
-      - VITE_PROD_PORT=${FRONTEND_PORT:-5173}
+      - VITE_API_BASE_URL=${API_BASE_URL}  # API base URL for frontend to communicate with backend
+      - VITE_PROD_PORT=${FRONTEND_PORT:-5173}  # Port for frontend service
     deploy:
       resources:
         limits:
-          cpus: '0.50'
-          memory: 512M
+          cpus: '0.50'  # Limit CPU usage to 0.5 cores
+          memory: 512M  # Limit memory usage to 512MB
         reservations:
-          cpus: '0.25'
-          memory: 256M
+          cpus: '0.25'  # Reserve 0.25 cores
+          memory: 256M  # Reserve 256MB memory
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173"]  # Health check command
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 40s
+      retries: 3  # Number of retries before marking as unhealthy
+      start_period: 40s  # Start period before health checks begin
     logging:
       driver: "json-file"
       options:
-        max-size: "200k"
-        max-file: "10"
+        max-size: "200k"  
+        max-file: "10"  
 
   kenyare-backend:
     build: 
       context: .
       dockerfile: Dockerfile.backend.txt
     environment:
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}  # Allowed hosts for backend
+      - OPENAI_API_KEY=${OPENAI_API_KEY}  # API key for OpenAI
     volumes:
-      - kenyare-backend-data:/var/lib/kenyare
-      - ./uploads:/kenyare/uploads
+      - kenyare-backend-data:/var/lib/kenyare  # Persistent storage for backend data
+      - ./uploads:/kenyare/uploads  # Mount uploads directory
     deploy:
       resources:
         limits:
-          cpus: '1.0'
-          memory: 1G
+          cpus: '1.0'  # Limit CPU usage to 1 core
+          memory: 1G  # Limit memory usage to 1GB
         reservations:
-          cpus: '0.5'
-          memory: 512M
-    restart: unless-stopped
+          cpus: '0.5'  # Reserve 0.5 cores
+          memory: 512M  # Reserve 512MB memory
+    restart: unless-stopped  # Restart policy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]  # Health check command
       interval: 30s
-      timeout: 10s
-      retries: 3
+      timeout: 10s 
+      retries: 3 
       start_period: 40s
     logging:
       driver: "json-file"
       options:
-        max-size: "200k"
-        max-file: "10"
+        max-size: "200k"  
+        max-file: "10"  
 
+  # NGINX service configuration
   nginx:
     build:
       context: .
       dockerfile: Dockerfile.nginx
     ports:
-      - "${NGINX_PORT:-80}:80"
+      - "${NGINX_PORT:-80}:80"  # Expose port 80 (HTTP traffic) for NGINX
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./static:/usr/share/nginx/html/static:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro  # Mount NGINX configuration file
+      - ./static:/usr/share/nginx/html/static:ro  # Mount static files directory
     depends_on:
-      - kenyare-frontend
-      - kenyare-backend
+      - kenyare-frontend  # To ensure frontend starts before NGINX
+      - kenyare-backend  # To ensure backend starts before NGINX
     deploy:
       resources:
         limits:
-          cpus: '0.30'
-          memory: 256M
+          cpus: '0.30'  # Limit CPU usage to 0.3 cores
+          memory: 256M  # Limit memory usage to 256MB
         reservations:
-          cpus: '0.10'
-          memory: 128M
-    restart: unless-stopped
+          cpus: '0.10'  # Reserve 0.1 cores
+          memory: 128M  # Reserve 128MB memory
+    restart: unless-stopped  # Restart policy
     healthcheck:
-      test: ["CMD", "nginx", "-t"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD", "nginx", "-t"]  # Health check command to test NGINX configuration
+      interval: 30s  
+      timeout: 10s  
+      retries: 3 
     logging:
       driver: "json-file"
       options:
-        max-size: "200k"
-        max-file: "10"
+        max-size: "200k"  
+        max-file: "10"  
 
 volumes:
   kenyare-backend-data:
-    driver: local
+    driver: local  # Use local driver for persistent storage
 
 networks:
   default:
-    driver: bridge
+    driver: bridge  # Use bridge network driver
     ipam:
       config:
-        - subnet: 172.28.0.0/16
+        - subnet: 172.28.0.0/16  # Custom subnet for the network
