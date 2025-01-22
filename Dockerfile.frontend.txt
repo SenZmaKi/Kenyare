@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
 # Install system dependencies
 RUN apk add --no-cache \
@@ -11,37 +11,20 @@ WORKDIR /kenyare
 # Copy package files
 COPY package.json pnpm-lock.yaml* ./
 
-# Install pnpm
-RUN npm install -g pnpm
+# Install pnpm and dependencies
+RUN npm install -g pnpm && pnpm install
 
-# Install dependencies
-RUN pnpm install
-
-# Copy source
+# Copy source code
 COPY . .
 
-# Build with increased memory to avoid OOM errors due to node_modules directory
-RUN NODE_OPTIONS="--max-old-space-size=2048" pnpm run build
-
-# Production image
-FROM node:20-alpine
-
-WORKDIR /kenyare
-
-# Install only production dependencies
-COPY --from=builder /kenyare/package.json /kenyare/pnpm-lock.yaml ./
-RUN npm install -g pnpm && pnpm install --prod
-
-# Copy built assets
-COPY --from=builder /kenyare/build ./build
-
-# We add a non-root user for ease of access
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Create non-root user
+RUN addgroup -S kenyare_group && adduser -S kenyare_user -G kenyare_group
 USER kenyare_user
 
 EXPOSE 5173
 
-CMD ["pnpm", "run", "preview", "--host", "0.0.0.0"]
+# Run in dev mode instead of preview
+CMD ["pnpm", "run", "dev", "--host", "0.0.0.0"]
 
 # Image metadata
 LABEL name="kenyare-frontend" version="1.0"
