@@ -28,7 +28,9 @@ export async function POST(event: RequestEvent) {
         Promise.all(financialAuditFiles.map((f) => saveFile(f as File, FINANCIAL_AUDITS_DIR)))
     ]);
 
-    const resp = await fetch(`${API_BASE_URL}/quotation/input`, {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://kenyare-backend:8000";
+
+    const resp = await fetch(`${apiUrl}/api/quotation/input`, {
         method: "POST",
         body: JSON.stringify({
             proposal_path: proposalFormPath,
