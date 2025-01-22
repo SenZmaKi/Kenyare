@@ -12,28 +12,30 @@ WORKDIR /kenyare
 RUN npm install -g pnpm
 
 # Create non-root user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN addgroup -S kenyare_group && adduser -S kenyare_user -G kenyare_group
 
 # Set proper ownership of the working directory and npm global directory
-RUN mkdir -p /home/appuser/.npm && \
-    chown -R appuser:appgroup /home/appuser/.npm && \
-    chown -R appuser:appgroup /kenyare
+RUN mkdir -p /home/kenyare_user/.npm && \
+    chown -R kenyare_user:kenyare_group /home/kenyare_user/.npm && \
+    chown -R kenyare_user:kenyare_group /kenyare
 
 # Switch to non-root user
-USER appuser
+USER kenyare_user
 
 # Copy package files with correct ownership
-COPY --chown=appuser:appgroup package.json pnpm-lock.yaml* ./
+COPY --chown=kenyare_user:kenyare_group package.json pnpm-lock.yaml* ./
 
 # Install dependencies as non-root user
 RUN pnpm install
 
 # Copy the rest of the application with correct ownership
-COPY --chown=appuser:appgroup . .
+COPY --chown=kenyare_user:kenyare_group . .
 
 # Ensure temp directory exists and has correct permissions
 RUN mkdir -p /kenyare/node_modules/.vite && \
-    mkdir -p /kenyare/node_modules/.pnpm
+    mkdir -p /kenyare/node_modules/.pnpm \
+    chown -R kenyare_user:kenyare_group /kenyare/node_modules/.vite && \
+    chown -R kenyare_user:kenyare_group /kenyare/node_modules/.pnpm
 
 EXPOSE 5173
 
