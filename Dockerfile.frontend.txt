@@ -39,8 +39,8 @@ RUN mkdir -p /kenyare/node_modules/.vite && \
 
 EXPOSE 5173
 
-# Run in dev mode with host and port explicitly set
-CMD ["sh", "-c", "pnpm run dev -- --host 0.0.0.0 --port 5173"]
+# Run in dev mode with host and port explicitly set with increased Node.js heap size to overcome esbuild issues on runtime
+CMD ["sh", "-c", "node --max-old-space-size=4096 node_modules/vite/bin/vite.js dev -- --host 0.0.0.0 --port 5173"]
 
 # Image metadata
 LABEL name="kenyare-frontend" version="1.0"

@@ -8,16 +8,20 @@ services:
     depends_on:
       - kenyare-backend  # This ensures that the backend service spins up before frontend
     environment:
+      - NODE_ENV=development
       - VITE_API_BASE_URL=${API_BASE_URL}  # API base URL for frontend to communicate with backend
       - VITE_PROD_PORT=${FRONTEND_PORT:-5173}  # Port for frontend service
+      - HOST=0.0.0.0
+    volumes:
+      - /kenyare/node_modules  # Persistent storage for node_modules between container restarts
     deploy:
       resources:
         limits:
-          cpus: '0.50'  # Limit CPU usage to 0.5 cores
-          memory: 512M  # Limit memory usage to 512MB
+          cpus: '2'  # Limit CPU usage to 0.5 cores
+          memory: 2G  # Limit memory usage to 512MB
         reservations:
           cpus: '0.25'  # Reserve 0.25 cores
-          memory: 256M  # Reserve 256MB memory
+          memory: 512M  # Reserve 256MB memory
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173"]  # Health check command
