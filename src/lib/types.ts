@@ -16,11 +16,25 @@ export type QuotationInput = {
   dishonest_employees: boolean;
   retroactive_cover: boolean;
 };
-
+export type NullableQuotationInput = {
+  [K in keyof QuotationInput]: QuotationInput[K] | null;
+};
 export type RateValueOriginal = {
   rate: number;
   value: number;
   original: any;
+};
+
+export type UserQuotationInput = {
+  [K in keyof QuotationInput]: K extends
+  | "qualified_assistants_count"
+  | "unqualified_assistants_count"
+  | "others_count"
+  | "annual_fees"
+  | "limit_of_indemnity"
+  | "partners_count"
+  ? string
+  : QuotationInput[K];
 };
 
 export type QuotationOutput = {

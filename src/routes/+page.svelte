@@ -20,7 +20,7 @@
   }
 
   // let quotationInput: QuotationInput | null = testQuotationInput;
-  let quotationInput: QuotationInput | null = null;
+  let nullableQuotationInput: QuotationInput | null = null;
   let isLoading = false;
   let toastIsError = false;
   let toastText = "";
@@ -80,8 +80,8 @@
     showLoading("Processing");
     showToast("This may take a while...", false);
     const formData = new FormData();
-    formData.append("proposalForm", proposalForm);
-    financialAudits.forEach((f) => formData.append("financialAudit", f));
+    formData.append("proposal_form", proposalForm);
+    financialAudits.forEach((f) => formData.append("financial_audits", f));
     let success = false;
 
     try {
@@ -92,7 +92,7 @@
       success = resp.ok;
       if (success) {
         const resp_json = await resp.json();
-        quotationInput = resp_json.data.quotation_input;
+        nullableQuotationInput = resp_json.data.nullable_quotation_input;
         console.log("Extracted!");
       }
     } catch (error) {
@@ -111,7 +111,7 @@
     const financialAudits = financialAuditFiles
       .filter((f) => f !== null && f !== undefined)
       .map((f) => f[0]);
-    if (!proposalFormFile && !financialAudits) {
+    if (!proposalFormFile && !financialAudits.length) {
       showToast("Please add both files", true);
       return;
     }
@@ -124,11 +124,20 @@
       return;
     }
     const proposalForm = proposalFormFile[0];
-    if (
-      !proposalForm.name.endsWith(".pdf") ||
-      financialAudits.some((f) => !f.name.endsWith(".pdf"))
-    ) {
+    const proposalFormIsPdf = proposalForm.name.endsWith(".pdf");
+    const financialAuditsArePdf = financialAudits.every((f) =>
+      f.name.endsWith(".pdf")
+    );
+    if (!proposalFormIsPdf && !financialAuditsArePdf) {
       showToast("All files must be in PDF format", true);
+      return;
+    }
+    if (!proposalFormIsPdf) {
+      showToast("Proposal form must be in PDF format", true);
+      return;
+    }
+    if (!financialAuditsArePdf) {
+      showToast("All financial audits must be in PDF format", true);
       return;
     }
     await getQuotationInput(proposalForm, financialAudits);
@@ -157,13 +166,13 @@
       {toastText}
     </Toast>
   {/if}
-  {#if quotationInput}
+  {#if nullableQuotationInput}
     <QuotationInputModal
-      {quotationInput}
+      {nullableQuotationInput}
       {showToast}
       {showLoading}
       {resetLoading}
-      open={!!quotationInput}
+      open={!!nullableQuotationInput}
     />
   {/if}
   <div

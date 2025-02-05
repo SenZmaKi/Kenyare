@@ -11,57 +11,79 @@
     CashSolid,
     ProfileCardOutline,
     UploadOutline,
+    ExclamationCircleSolid,
   } from "flowbite-svelte-icons";
-  import { testQuotationInput, type QuotationInput } from "$lib/types";
+  import {
+    testQuotationInput,
+    type NullableQuotationInput,
+    type QuotationInput,
+    type UserQuotationInput,
+  } from "$lib/types";
   import { goto } from "$app/navigation";
-  export let quotationInput: QuotationInput = testQuotationInput
+  import FieldTitle from "./FieldTitle.svelte";
+
+  export let nullableQuotationInput: NullableQuotationInput =
+    testQuotationInput;
   export let open: boolean;
   export let showToast: (text: string, isError?: boolean) => void;
   export let showLoading: (task: string) => void;
   export let resetLoading: () => void;
-  let showFinancialSummary = !quotationInput.is_profitable;
-  function convertQuotationInputToProperFormat(quotationInput: QuotationInput) {
+
+  $: showFinancialSummary = !nullableQuotationInput.is_profitable;
+  let userQuotationInput: UserQuotationInput;
+  $: userQuotationInput = {
+    qualified_assistants_count: (
+      nullableQuotationInput.qualified_assistants_count ?? 0
+    ).toString(),
+    unqualified_assistants_count: (
+      nullableQuotationInput.unqualified_assistants_count ?? 0
+    ).toString(),
+    others_count: (nullableQuotationInput.others_count ?? 0).toString(),
+    annual_fees: (nullableQuotationInput.annual_fees ?? 0).toString(),
+    limit_of_indemnity: (
+      nullableQuotationInput.limit_of_indemnity ?? 0
+    ).toString(),
+    partners_count: (nullableQuotationInput.partners_count ?? 0).toString(),
+    reinsured_name: nullableQuotationInput.reinsured_name ?? "",
+    broker_name: nullableQuotationInput.broker_name ?? "",
+    insured_name: nullableQuotationInput.insured_name ?? "",
+    is_profitable: !!nullableQuotationInput.is_profitable,
+    financial_summary: nullableQuotationInput.financial_summary ?? "",
+    profession: nullableQuotationInput.profession ?? "",
+    loss_of_documents: !!nullableQuotationInput.loss_of_documents,
+    libel_and_slander: !!nullableQuotationInput.libel_and_slander,
+    dishonest_employees: !!nullableQuotationInput.dishonest_employees,
+    retroactive_cover: !!nullableQuotationInput.retroactive_cover,
+  };
+
+  function convertUserQIToQI(): QuotationInput {
     return {
-      reinsured_name: quotationInput.reinsured_name,
-      broker_name: quotationInput.broker_name,
-      insured_name: quotationInput.insured_name,
-      // @ts-ignore
-      partners_count: parseInt(quotationInput.partners_count),
+      ...userQuotationInput,
+
+      partners_count: parseInt(userQuotationInput.partners_count),
       qualified_assistants_count: parseInt(
-        // @ts-ignore
-        quotationInput.qualified_assistants_count
+        userQuotationInput.qualified_assistants_count
       ),
       unqualified_assistants_count: parseInt(
-        // @ts-ignore
-        quotationInput.unqualified_assistants_count
+        userQuotationInput.unqualified_assistants_count
       ),
-      // @ts-ignore
-      others_count: parseInt(quotationInput.others_count),
-      // @ts-ignore
-      annual_fees: parseFloat(quotationInput.annual_fees),
-      // @ts-ignore
-      limit_of_indemnity: parseFloat(quotationInput.limit_of_indemnity),
-      profession: quotationInput.profession,
-      loss_of_documents: quotationInput.loss_of_documents,
-      libel_and_slander: quotationInput.libel_and_slander,
-      dishonest_employees: quotationInput.dishonest_employees,
-      retroactive_cover: quotationInput.retroactive_cover,
+      others_count: parseInt(userQuotationInput.others_count),
+      annual_fees: parseFloat(userQuotationInput.annual_fees),
+      limit_of_indemnity: parseFloat(userQuotationInput.limit_of_indemnity),
     };
   }
+
   async function generateQuotation() {
     open = false;
     showLoading("Generating quotation");
     console.log("Generating quotation...");
-    const properQuotationInput =
-      convertQuotationInputToProperFormat(quotationInput);
-    console.log(
-      `properQuotationInput: ${JSON.stringify(properQuotationInput)}`
-    );
+    const quotation_input = convertUserQIToQI();
+    console.log(`quotation_input: ${JSON.stringify(quotation_input)}`);
     let success = false;
     try {
       const resp = await fetch("/quotation/output", {
         method: "POST",
-        body: JSON.stringify({ quotation_input: properQuotationInput }),
+        body: JSON.stringify({ quotation_input }),
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -83,8 +105,11 @@
       return;
     }
     console.log($quotationOutput);
-    goto("/quotation/output/");
+    await goto("/quotation/output/");
     resetLoading();
+  }
+  function getAsterisk(key: keyof NullableQuotationInput) {
+    return nullableQuotationInput[key] === null ? " *" : "";
   }
 </script>
 
@@ -96,22 +121,27 @@
 >
   {#if showFinancialSummary}
     <div class="z-0 flex flex-col m-auto mt-2 justify-center items-center p-4">
-      <slot name="header">
-        <div class="flex gap-2 items-center">
-          {#if quotationInput.is_profitable}
-            <BadgeCheckSolid size="md" color="green" />
-            <Label class="text-green-500 text-base"
-              >The organisation is profitable</Label
-            >
-          {:else}
-            <CloseCircleSolid size="md" color="red" />
-            <Label class="text-red-500 text-base"
-              >The organization is not profitable</Label
-            >
-          {/if}
-        </div>
-      </slot>
-      <p class="p-4">{quotationInput.financial_summary}</p>
+      <div class="flex gap-2 items-center">
+        {#if nullableQuotationInput.is_profitable}
+          <BadgeCheckSolid size="md" color="green" />
+          <Label class="text-green-500 text-base"
+            >The organisation is profitable</Label
+          >
+        {:else if nullableQuotationInput.is_profitable === null}
+          <ExclamationCircleSolid size="md" color="red" />
+          <Label class="text-red-500 text-base"
+            >Failed to determine whether the organization is profitable</Label
+          >
+        {:else}
+          <CloseCircleSolid size="md" color="red" />
+          <Label class="text-red-500 text-base"
+            >The organization is not profitable</Label
+          >
+        {/if}
+      </div>
+      {#if nullableQuotationInput.financial_summary}
+        <p class="p-4">{nullableQuotationInput.financial_summary}</p>
+      {/if}
       <slot name="footer">
         <div class="items-center flex">
           <Button
@@ -128,183 +158,245 @@
       </slot>
     </div>
   {:else}
-    <div class="z-0 flex flex-col m-auto mt-2 justify-center items-center">
-      <div class=" flex-col p-2 mb-5 grid gap-10 border rounded-lg">
-        <div class="flex gap-5 justify-between">
-          <div class="pb-1 flex flex-col">
-            <div class="flex items-center">
-              <ProfileCardOutline />
-              <Label class="pl-2" for="reinsured_name">Reinsured</Label>
-            </div>
-            <Input
-              id="reinsured_name"
-              bind:value={quotationInput.reinsured_name}
-            />
-          </div>
-          <div class="pb-1">
-            <div class="flex items-center">
-              <ProfileCardOutline />
-              <Label class="pl-2" for="broker_name">Broker</Label>
-            </div>
-            <Input id="broker_name" bind:value={quotationInput.broker_name} />
-          </div>
-          <div class="pb-1">
-            <div class="flex items-center">
-              <ProfileCardOutline />
-              <Label class="pl-2" for="insured_name">Insured</Label>
-            </div>
-            <Input id="insured_name" bind:value={quotationInput.insured_name} />
-          </div>
-        </div>
-        <div class="flex gap-5 justify-between">
-          <div>
-            <div class="pb-1 flex items-center">
-              <UsersGroupSolid />
-              <Label class="pl-2" for="partners_count">Partners</Label>
-            </div>
-            <Input
-              id="partners_count"
-              type="number"
-              bind:value={quotationInput.partners_count}
-            />
-          </div>
-          <div>
-            <div class="pb-1 flex items-center">
-              <UsersGroupSolid />
-              <Label class="pl-2" for="qualified_assistants_count"
-                >Qualified assistants</Label
-              >
-            </div>
-            <Input
-              id="qualified_assistants_count"
-              bind:value={quotationInput.qualified_assistants_count}
-              type="number"
-              placeholder="Qualified Assistants Count"
-            />
-          </div>
-          <div>
-            <div class="pb-1 flex items-center">
-              <UsersGroupSolid />
-              <Label class="pl-2" for="unqualified_assistants_count"
-                >Unqualified assistants</Label
-              >
-            </div>
-            <Input
-              id="unqualified_assistants_count"
-              type="number"
-              bind:value={quotationInput.unqualified_assistants_count}
-              placeholder="Unqualified Assistants Count"
-            />
-          </div>
-          <div>
-            <div class="pb-1 flex items-center">
-              <UsersGroupSolid />
-              <Label class="pl-2" for="others_count">Other employees</Label>
-            </div>
-            <Input
-              id="others_count"
-              type="number"
-              bind:value={quotationInput.others_count}
-              placeholder="Others Count"
-            />
-          </div>
-        </div>
-        <div class="flex gap-4 justify-between">
-          <div>
-            <div class="flex pb-1">
-              <CalendarMonthSolid />
-              <Label class="pl-2">Annual fees</Label>
-            </div>
-
-            <Input
-              id="annual_fees"
-              type="number"
-              bind:value={quotationInput.annual_fees}
-              placeholder="Annual Fees"
-            />
-          </div>
-          <div class="">
-            <div class="flex pb-1">
-              <CashSolid />
-              <Label class="pl-2" for="limit_of_indemnity"
-                >Limit of indemnity</Label
-              >
-            </div>
-            <Input
-              id="limit_of_indemnity"
-              type="number"
-              bind:value={quotationInput.limit_of_indemnity}
-              placeholder="Limit of Indemnity"
-            />
-          </div>
-          <div>
-            <div class="flex items-center pb-1">
-              <BriefcaseSolid />
-              <Label class="pl-2" for="profession">Profession</Label>
-            </div>
-            <Input
-              id="profession"
-              bind:value={quotationInput.profession}
-              placeholder="Profession"
-            />
-          </div>
-        </div>
-        <div class="flex gap-5 justify-between">
-          <div class="pb-1 items-center flex flex-col">
-            <Label>Loss of documents</Label>
-            <Toggle
-              class="hover:cursor-pointer"
-              bind:checked={quotationInput.loss_of_documents}
-            />
-          </div>
-          <div class="pb-1 items-center flex flex-col">
-            <Label>Libel and slander</Label>
-            <Toggle
-              class="hover:cursor-pointer"
-              bind:checked={quotationInput.libel_and_slander}
-            />
-          </div>
-          <div class="pb-1 items-center flex flex-col">
-            <Label>Dishonest employees</Label>
-            <Toggle
-              class="hover:cursor-pointer"
-              bind:checked={quotationInput.dishonest_employees}
-            />
-          </div>
-
-          <div class="pb-1 items-center flex flex-col">
-            <Label>Retroactive cover</Label>
-            <Toggle
-              class="hover:cursor-pointer"
-              bind:checked={quotationInput.retroactive_cover}
-            />
-          </div>
-        </div>
+    <div class="flex flex-col items-cen">
+      <div class="pl-7 text-xs text-gray-400 italic mt-2 flex gap-1">
+        <ExclamationCircleSolid size="sm" color="red" />
+        means the field could not be extracted so it may require manual input.
       </div>
-      <slot name="footer">
-        <div class="flex gap-4">
-          <Button
-            on:click={generateQuotation}
-            class="hover:scale-110 duration-300 ease-in-out"
-          >
-            <div class="flex items-center gap-2">
-              <p>Generate quotation</p>
-              <UploadOutline />
+      <div class="z-0 flex flex-col m-auto mt-2 justify-center items-center">
+        <div class=" flex-col p-2 mb-5 grid gap-10 border rounded-lg">
+          <div class="flex gap-5 justify-between">
+            <div class="pb-1 flex flex-col">
+              <div class="flex items-center">
+                <ProfileCardOutline />
+                <FieldTitle
+                  title="Reinsured"
+                  field="reinsured_name"
+                  {nullableQuotationInput}
+                />
+              </div>
+              <Input
+                id="reinsured_name"
+                bind:value={userQuotationInput.reinsured_name}
+              />
             </div>
-          </Button>
-          <Button
-            class="hover:scale-110 duration-300 ease-in-out"
-            color="green"
-            on:click={() => (showFinancialSummary = true)}
-          >
-            <div class="flex items-center gap-2">
-              <p>Financial summary</p>
-              <CashSolid />
+            <div class="pb-1">
+              <div class="flex items-center">
+                <ProfileCardOutline />
+                <FieldTitle
+                  title="Broker"
+                  field="broker_name"
+                  {nullableQuotationInput}
+                />
+              </div>
+              <Input
+                id="broker_name"
+                bind:value={userQuotationInput.broker_name}
+              />
             </div>
-          </Button>
+            <div class="pb-1">
+              <div class="flex items-center">
+                <ProfileCardOutline />
+                <FieldTitle
+                  title="Insured name"
+                  field="insured_name"
+                  {nullableQuotationInput}
+                />
+              </div>
+              <Input
+                id="insured_name"
+                bind:value={userQuotationInput.insured_name}
+              />
+            </div>
+          </div>
+          <div class="flex gap-5 justify-between">
+            <div>
+              <div class="pb-1 flex items-center">
+                <UsersGroupSolid />
+                <FieldTitle
+                  title="Partners"
+                  field="partners_count"
+                  {nullableQuotationInput}
+                />
+              </div>
+              <Input
+                id="partners_count"
+                type="number"
+                bind:value={userQuotationInput.partners_count}
+              />
+            </div>
+            <div>
+              <div class="pb-1 flex items-center">
+                <UsersGroupSolid />
+                <FieldTitle
+                  title="Qualified assistants"
+                  field="qualified_assistants_count"
+                  {nullableQuotationInput}
+                />
+              </div>
+              <Input
+                id="qualified_assistants_count"
+                bind:value={userQuotationInput.qualified_assistants_count}
+                type="number"
+                placeholder="Qualified Assistants Count"
+              />
+            </div>
+            <div>
+              <div class="pb-1 flex items-center">
+                <UsersGroupSolid />
+                <FieldTitle
+                  title="Unqualified assistants"
+                  field="unqualified_assistants_count"
+                  {nullableQuotationInput}
+                />
+              </div>
+              <Input
+                id="unqualified_assistants_count"
+                type="number"
+                bind:value={userQuotationInput.unqualified_assistants_count}
+                placeholder="Unqualified Assistants Count"
+              />
+            </div>
+            <div>
+              <div class="pb-1 flex items-center">
+                <UsersGroupSolid />
+                <FieldTitle
+                  title="Other employees"
+                  field="others_count"
+                  {nullableQuotationInput}
+                />
+              </div>
+              <Input
+                id="others_count"
+                type="number"
+                bind:value={userQuotationInput.others_count}
+                placeholder="Others Count"
+              />
+            </div>
+          </div>
+          <div class="flex gap-4 justify-between">
+            <div>
+              <div class="flex pb-1">
+                <CalendarMonthSolid />
+                <FieldTitle
+                  title="Annual fees"
+                  field="annual_fees"
+                  {nullableQuotationInput}
+                />
+              </div>
+
+              <Input
+                id="annual_fees"
+                type="number"
+                bind:value={userQuotationInput.annual_fees}
+                placeholder="Annual Fees"
+              />
+            </div>
+            <div class="">
+              <div class="flex pb-1">
+                <CashSolid />
+                <FieldTitle
+                  title="Limit of indemnity"
+                  field="limit_of_indemnity"
+                  {nullableQuotationInput}
+                />
+              </div>
+              <Input
+                id="limit_of_indemnity"
+                type="number"
+                bind:value={userQuotationInput.limit_of_indemnity}
+                placeholder="Limit of Indemnity"
+              />
+            </div>
+            <div>
+              <div class="flex items-center pb-1">
+                <BriefcaseSolid />
+                <FieldTitle
+                  title="Profession"
+                  field="profession"
+                  {nullableQuotationInput}
+                />
+              </div>
+              <Input
+                id="profession"
+                bind:value={userQuotationInput.profession}
+                placeholder="Profession"
+              />
+            </div>
+          </div>
+          <div class="flex gap-5 justify-between">
+            <div class="pb-1 items-center flex flex-col">
+              <FieldTitle
+                title="Loss of documents"
+                field="loss_of_documents"
+                {nullableQuotationInput}
+              />
+              <Toggle
+                class="hover:cursor-pointer"
+                bind:checked={userQuotationInput.loss_of_documents}
+              />
+            </div>
+            <div class="pb-1 items-center flex flex-col">
+              <FieldTitle
+                title="Libel and slander"
+                field="libel_and_slander"
+                {nullableQuotationInput}
+              />
+              <Toggle
+                class="hover:cursor-pointer"
+                bind:checked={userQuotationInput.libel_and_slander}
+              />
+            </div>
+            <div class="pb-1 items-center flex flex-col">
+              <FieldTitle
+                title="Dishonest employees"
+                field="dishonest_employees"
+                {nullableQuotationInput}
+              />
+              <Toggle
+                class="hover:cursor-pointer"
+                bind:checked={userQuotationInput.dishonest_employees}
+              />
+            </div>
+
+            <div class="pb-1 items-center flex flex-col">
+              <FieldTitle
+                title="Retroactive cover"
+                field="retroactive_cover"
+                {nullableQuotationInput}
+              />
+              <Toggle
+                class="hover:cursor-pointer"
+                bind:checked={userQuotationInput.retroactive_cover}
+              />
+            </div>
+          </div>
         </div>
-      </slot>
-      <div />
+        <slot name="footer">
+          <div class="flex gap-4">
+            <Button
+              on:click={generateQuotation}
+              class="hover:scale-110 duration-300 ease-in-out"
+            >
+              <div class="flex items-center gap-2">
+                <p>Generate quotation</p>
+                <UploadOutline />
+              </div>
+            </Button>
+            <Button
+              class="hover:scale-110 duration-300 ease-in-out"
+              color="green"
+              on:click={() => (showFinancialSummary = true)}
+            >
+              <div class="flex items-center gap-2">
+                <p>Financial summary</p>
+                <CashSolid />
+              </div>
+            </Button>
+          </div>
+        </slot>
+        <div />
+      </div>
     </div>
   {/if}
 </Modal>

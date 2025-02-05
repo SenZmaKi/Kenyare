@@ -1,5 +1,5 @@
 import json
-from kenyare.quotation.common import QuotationInput, QuotationOutput
+from kenyare.quotation.common import QuotationInput, QuotationOutput, test_quotation_input
 
 
 class Constants:
@@ -158,25 +158,7 @@ def get_quotation_output(input: QuotationInput) -> QuotationOutput:
 
 
 def test():
-    input: QuotationInput = {
-        "is_profitable": True,
-        "financial_summary": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-        "insured_name": "FEKAN HOWELL",
-        "reinsured_name": "FIRST ASSURANCE",
-        "broker_name": "RSI",
-        "partners_count": 3,
-        "qualified_assistants_count": 7,
-        "unqualified_assistants_count": 0,
-        "others_count": 0,
-        "annual_fees": 70_000_000,
-        "limit_of_indemnity": 100_000_000,
-        "profession": "AUDIT, TAX AND ADVISORY SERVICES(CERTIFIED PUBLIC ACCOUNTANTS)",
-        "loss_of_documents": True,
-        "libel_and_slander": True,
-        "dishonest_employees": True,
-        "retroactive_cover": False,
-    }
-    output = get_quotation_output(input)
+    output = get_quotation_output(test_quotation_input)
 
     print(json.dumps(output, indent=4))
     assert output["total_premium"] == 1466199.5

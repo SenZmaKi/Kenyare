@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { API_BASE_URL, DELETE_UPLOADS, FINANCIAL_AUDITS_DIR, PROPOSAL_FORMS_DIR } from '$lib/consts';
 import { randomUUID } from 'crypto';
-import type { QuotationInput } from '$lib/types';
+import type { NullableQuotationInput } from '$lib/types';
 
 async function saveFile(file: File, saveDir: string): Promise<string> {
     const fileExtension = file.name.split('.').pop();
@@ -19,9 +19,9 @@ export async function POST(event: RequestEvent) {
     const data = await event.request.formData();
 
 
-    const proposalFormFile = data.get('proposalForm');
+    const proposalFormFile = data.get('proposal_form');
     if (!proposalFormFile) throw error(400, 'No proposal form file found');
-    const financialAuditFiles = data.getAll('financialAudit');
+    const financialAuditFiles = data.getAll('financial_audits');
     if (!financialAuditFiles.length) throw error(400, 'No financial audit files found');
 
     const [proposalFormPath, financialAuditPaths] = await Promise.all([
@@ -44,11 +44,11 @@ export async function POST(event: RequestEvent) {
     if (DELETE_UPLOADS)
         Promise.all([...financialAuditPaths, proposalFormPath].map(fs.promises.unlink));
 
-    const resp_json = await resp.json();
-    const quotation_input: QuotationInput = resp_json.data.quotation_input;
-    console.log(`quotation_input: ${JSON.stringify(quotation_input)}`);
+    const respJson = await resp.json();
+    const nullable_quotation_input: NullableQuotationInput = respJson.data.nullable_quotation_input;
+    console.log(`nullable_quotation_input: ${JSON.stringify(nullable_quotation_input)}`);
     return json({
-        data: { quotation_input }
+        data: { nullable_quotation_input }
     });
 
 }

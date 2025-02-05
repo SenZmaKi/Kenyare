@@ -1,5 +1,6 @@
 import json
 import logging
+from pathlib import Path
 from typing import Callable
 from dotenv import load_dotenv
 import openai
@@ -8,42 +9,16 @@ from io import BytesIO
 from PIL import Image
 import time
 import pdf2image
-
-from kenyare.quotation.common import QuotationInput
-
+from kenyare.quotation.common import NullableQuotationInput
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("OpenAI")
+
 IMAGE_FORMAT = "jpeg"
-
-PROMPT = """
-    The following documents are the financial audits and accounts and the insurance proposal form of an organization. 
-    Take into account some of the information on the documents may be handwritten.
-    Extract the following information in json format.
-    Restrict yourself to the provided json format and fields, ensure the json is flat, no nesting fields, just one layer deep.
-    If you can't extract the data then set the values to default i.e., default string is empty string, default boolean is false, default number is 0.
-
-    json format start
-    is_profitable: bool # Determine whether the organization is profitable
-    financial_summary: str # An in-depth financial breakdown of the organization, go into detail, one paragraph
-    insured_name: str # The name of the person/organization seeking insurance
-    reinsured_name: str # The name of the organization seeking reinsurance
-    broker_name: str
-    partners_count: int # The number of principals/partners in the insured organization
-    qualified_assistants_count: int # The number of qualified assistants in the insured organization
-    unqualified_assistants_count: int # The number of unqualified assistants in the insured organization
-    others_count: int # The number of other employees in the insured organzation
-    annual_fees: float # The estimated annual earnings of the insured organization
-    limit_of_indemnity: float # The proposed limit of indemnity by the insured organization
-    profession: str # The main profession of the insured organization
-    loss_of_documents: bool # Whether the insurance should cover loss of documents
-    libel_and_slander: bool # Whether the insurance should cover libel and slander
-    dishonest_employees: bool # Whether the insurance should cover employee dishonesty
-    retroactive_cover: bool # Whether the cover is retroactive
-    json format end
-
-    """
+parent_folder = Path(__file__).parent
+PROMPT = (parent_folder / "prompt.md").read_text(encoding="utf-8")
+ROLE = (parent_folder / "role.md").read_text(encoding="utf-8")
 
 
 class OpenAIException(Exception):
@@ -73,7 +48,7 @@ def image_to_base64(image: Image.Image) -> str:
     return img_base64
 
 
-def run_prompt(doc_paths: list[str]) -> QuotationInput:
+def run_prompt(doc_paths: list[str]) -> NullableQuotationInput:
     logger.info(f"Converting pdfs to images: {doc_paths}")
     prt = print_runtime_later("Convert pdfs to images")
     pdf_images = [
@@ -89,7 +64,7 @@ def run_prompt(doc_paths: list[str]) -> QuotationInput:
     logger.info(f"Prompting OpenAI with {len(base64_images)} images")
     prt = print_runtime_later("Prompting OpenAI")
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4o",
         response_format={"type": "json_object"},
         messages=[
             {
@@ -112,7 +87,7 @@ def run_prompt(doc_paths: list[str]) -> QuotationInput:
             },
             {
                 "role": "system",
-                "content": "You are an underwriting assistant for Kenya Reinsurance Corporation (KRC).",
+                "content": ROLE,
             },
         ],
     )

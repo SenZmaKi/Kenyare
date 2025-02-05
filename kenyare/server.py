@@ -22,13 +22,19 @@ if os.getenv("CLEAR_QUOTATIONS_DIR") == "1":
 
 
 @app.route("/quotation/input", methods=["POST"])
-def quotation_upload():
+def quotation_input():
+    # from kenyare.quotation.common import test_nullable_quotation_input
+    # return jsonify(
+    #     {"data": {"nullable_quotation_input": test_nullable_quotation_input}}
+    # ), 200
     if not request.json:
         return jsonify({"error": "No JSON in request"}), 400
     proposal_path = request.json["proposal_path"]
     audit_paths = request.json["audit_paths"]
-    quotation_input = run_prompt([*audit_paths, proposal_path])
-    return jsonify({"data": {"quotation_input": quotation_input}}), 200
+    nullable_quotation_input = run_prompt([*audit_paths, proposal_path])
+    return jsonify(
+        {"data": {"nullable_quotation_input": nullable_quotation_input}}
+    ), 200
 
 
 @app.route("/quotation/output", methods=["POST"])
