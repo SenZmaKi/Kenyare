@@ -15,7 +15,7 @@
 <Main>
   {#if quotationOutput}
     <div class="flex flex-col justify-center items-center p-10">
-      <div class="z-10 flex pb-5 justify-center items-center">
+      <div class="flex pb-5 justify-center items-center">
         <p class="text-xl pr-5 font-bold">Professional Indemnity Quotation</p>
 
         <a

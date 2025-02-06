@@ -1,7 +1,7 @@
 <script lang="ts">
   import Main from "../components/Main.svelte";
-  import { Toast, Button, Helper } from "flowbite-svelte";
-  import { onMount, tick } from "svelte";
+  import { Toast, Button } from "flowbite-svelte";
+  import { onMount } from "svelte";
   import {
     CheckCircleSolid,
     CloseCircleSolid,
@@ -144,12 +144,13 @@
   }
 
   onMount(() => {
-    titleStyle = { transform: "translateX(0)", opacity: 1 };
+    titleStyle = "transform: translateX(0); opacity: 1";
   });
-  let titleStyle = { transform: "translateX(-200px)", opacity: 0 };
+  let titleStyle = "transform: translateX(-200px); opacity: 0";
 </script>
 
-<Main {isLoading}>
+<Main {isLoading}
+>
   {#if toastText}
     <Toast
       class="absolute top-0 right-0 toast"
@@ -175,20 +176,15 @@
       open={!!nullableQuotationInput}
     />
   {/if}
-  <div
-    class="z-10 justify-center items-center h-screen flex flex-col space-y-20"
-  >
-    <h1
-      class="z-10 title"
-      style="transform: {titleStyle.transform}; opacity: {titleStyle.opacity};"
-    >
+  <div class="justify-center items-center h-screen flex flex-col space-y-20">
+    <h1 class="title" style={titleStyle}>
       {homeText}
       <span class="">
         {homeTextLoading}
       </span>
     </h1>
-    <div class="z-10 flex flex-col gap-6 items-center">
-      <div class="z-10 flex gap-10">
+    <div class="flex flex-col gap-6 items-center">
+      <div class="flex gap-10">
         <div class="space-y-2">
           <Label>Financial audits and accounts</Label>
 
