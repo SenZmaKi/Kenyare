@@ -70,6 +70,7 @@ class QuotationOutput(TypedDict):
     total_premium: float
     excel_download_url: str
 
+
 test_nullable_quotation_input: NullableQuotationInput = {
     "is_profitable": True,
     "financial_summary": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
@@ -92,7 +93,7 @@ test_nullable_quotation_input: NullableQuotationInput = {
 
 test_quotation_input: QuotationInput = {
     "is_profitable": True,
-    "financial_summary": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+    "financial_summary": "The organization reported a revenue of KES 120 million, marking a 15% increase from the previous year, with a net profit of KES 32 million and a strong 26.7% margin. Operating expenses remained controlled at KES 43 million, supporting overall profitability. Positive cash flow of KES 28 million was recorded, and the company maintains a healthy balance sheet with low debt and strong equity.",
     "insured_name": "FEKAN HOWELL",
     "reinsured_name": "FIRST ASSURANCE",
     "broker_name": "RSI",
