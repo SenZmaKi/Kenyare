@@ -2,16 +2,20 @@
 
 - [Table of Contents](#table-of-contents)
 - [Introduction](#introduction)
+- [Video demo](#video-demo)
 - [Problem Description](#problem-description)
 - [Proposed solution](#proposed-solution)
 - [System diagram](#system-diagram)
-- [Video demo](#video-demo)
 - [Installation](#installation)
 - [Environment Variables](#environment-variables)
 
 # Introduction
 - **Winner💫** of the First Kenyare AI4I Hackathon
 - KBS AI bot that automates Kenyare's PI facultative underwriting
+
+# Video demo
+
+https://github.com/user-attachments/assets/f03b57d6-a5b2-4c38-9d59-d19778864a8f
 
 # Problem Description
 
@@ -27,9 +31,6 @@ The proposed solution is an AI-powered bot designed to automate the processing o
 
 ![System schema](https://github.com/SenZmaKi/Kenyare/blob/master/docs/schema.png)
 
-# Video demo
-
-https://github.com/user-attachments/assets/f03b57d6-a5b2-4c38-9d59-d19778864a8f
 
 # Installation
 
